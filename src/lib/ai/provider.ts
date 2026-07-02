@@ -1,4 +1,4 @@
-import { fetchWithTimeout, TimeoutError } from './client';
+import { fetchWithTimeout } from './client';
 
 export interface ChatMessage {
   role: 'system' | 'user' | 'assistant';
