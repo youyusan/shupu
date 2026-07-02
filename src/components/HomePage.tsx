@@ -6,32 +6,31 @@ import { useRouter } from 'next/navigation';
 import { useAppState } from '@/lib/state/app-context';
 
 const marqueeBooks = [
-  { title: '百年孤独', author: '加西亚·马尔克斯', cover: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&w=320&h=480&q=80' },
-  { title: '小王子', author: '圣埃克苏佩里', cover: 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?auto=format&fit=crop&w=320&h=480&q=80' },
-  { title: '人类简史', author: '尤瓦尔·赫拉利', cover: 'https://images.unsplash.com/photo-1524578271613-d550eacf6090?auto=format&fit=crop&w=320&h=480&q=80' },
-  { title: '活着', author: '余华', cover: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=320&h=480&q=80' },
-  { title: '三体', author: '刘慈欣', cover: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?auto=format&fit=crop&w=320&h=480&q=80' },
-  { title: '设计心理学', author: '唐纳德·诺曼', cover: 'https://images.unsplash.com/photo-1541963463532-d68292c34b19?auto=format&fit=crop&w=320&h=480&q=80' },
-  { title: '思考，快与慢', author: '丹尼尔·卡尼曼', cover: 'https://images.unsplash.com/photo-1495446815901-a7297e633e8d?auto=format&fit=crop&w=320&h=480&q=80' },
-  { title: '月亮与六便士', author: '毛姆', cover: 'https://images.unsplash.com/photo-1532012197267-da84d127e765?auto=format&fit=crop&w=320&h=480&q=80' },
+  { title: '百年孤独', author: '加西亚·马尔克斯', cover: 'https://books.google.com/books/content?id=PZ8SBAAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api' },
+  { title: '小王子', author: '圣埃克苏佩里', cover: 'https://books.google.com/books/content?id=5K52BQAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api' },
+  { title: '人类简史', author: '尤瓦尔·赫拉利', cover: 'https://books.google.com/books/content?id=NWHxDwAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api' },
+  { title: '活着', author: '余华', cover: 'https://books.google.com/books/content?id=59QJAwAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api' },
+  { title: '三体', author: '刘慈欣', cover: 'https://books.google.com/books/content?id=7p7uBQAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api' },
+  { title: '设计心理学', author: '唐纳德·诺曼', cover: 'https://books.google.com/books/content?id=E7XxDwAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api' },
+  { title: '思考，快与慢', author: '丹尼尔·卡尼曼', cover: 'https://books.google.com/books/content?id=e8xWDwAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api' },
+  { title: '月亮与六便士', author: '毛姆', cover: 'https://books.google.com/books/content?id=R4kRDwAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api' },
 ];
 
 const marqueeBooks2 = [
-  { title: '红楼梦', author: '曹雪芹', cover: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=320&h=480&q=80' },
-  { title: '原则', author: '瑞·达利欧', cover: 'https://images.unsplash.com/photo-1519682337058-a94d519337bc?auto=format&fit=crop&w=320&h=480&q=80' },
-  { title: '被讨厌的勇气', author: '岸见一郎', cover: 'https://images.unsplash.com/photo-1553729459-uj9bi6zuwpti?auto=format&fit=crop&w=320&h=480&q=80' },
-  { title: '枪炮、病菌与钢铁', author: '贾雷德·戴蒙德', cover: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=320&h=480&q=80' },
-  { title: '瓦尔登湖', author: '梭罗', cover: 'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=320&h=480&q=80' },
-  { title: '刻意练习', author: '安德斯·艾利克森', cover: 'https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&w=320&h=480&q=80' },
-  { title: '追风筝的人', author: '卡勒德·胡赛尼', cover: 'https://images.unsplash.com/photo-1476275466078-4007374efbbe?auto=format&fit=crop&w=320&h=480&q=80' },
-  { title: '黑客与画家', author: '保罗·格雷厄姆', cover: 'https://images.unsplash.com/photo-1589998059171-988d887df646?auto=format&fit=crop&w=320&h=480&q=80' },
+  { title: '红楼梦', author: '曹雪芹', cover: 'https://books.google.com/books/content?id=E9YRAQAAMAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api' },
+  { title: '原则', author: '瑞·达利欧', cover: 'https://books.google.com/books/content?id=6R8PDwAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api' },
+  { title: '被讨厌的勇气', author: '岸见一郎', cover: 'https://books.google.com/books/content?id=6rIRDwAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api' },
+  { title: '枪炮、病菌与钢铁', author: '贾雷德·戴蒙德', cover: 'https://books.google.com/books/content?id=L_7WDwAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api' },
+  { title: '瓦尔登湖', author: '梭罗', cover: 'https://books.google.com/books/content?id=84nVDwAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api' },
+  { title: '刻意练习', author: '安德斯·艾利克森', cover: 'https://books.google.com/books/content?id=w4YpDwAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api' },
+  { title: '追风筝的人', author: '卡勒德·胡赛尼', cover: 'https://books.google.com/books/content?id=M7QDqwAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api' },
+  { title: '黑客与画家', author: '保罗·格雷厄姆', cover: 'https://books.google.com/books/content?id=1uN0AwAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api' },
 ];
 
 export default function HomePage() {
   const { state, dispatch } = useAppState();
   const router = useRouter();
   const [localInput, setLocalInput] = useState(state.rawInput);
-  const [isListening, setIsListening] = useState(false);
   const marqueeRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -101,72 +100,6 @@ export default function HomePage() {
     }
   };
 
-  const handleVoiceClick = () => {
-    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-      alert('您的浏览器不支持语音输入');
-      return;
-    }
-
-    interface SpeechRecognitionEvent {
-    results: SpeechRecognitionResultList;
-}
-
-interface SpeechRecognitionResultList {
-    [index: number]: SpeechRecognitionResult;
-    length: number;
-}
-
-interface SpeechRecognitionResult {
-    [index: number]: SpeechRecognitionAlternative;
-}
-
-interface SpeechRecognitionAlternative {
-    transcript: string;
-}
-
-type SpeechRecognitionConstructor = {
-    new (): {
-        lang: string;
-        interimResults: boolean;
-        maxAlternatives: number;
-        onstart?: () => void;
-        onend?: () => void;
-        onresult?: (event: SpeechRecognitionEvent) => void;
-        onerror?: () => void;
-        start(): void;
-        stop(): void;
-    };
-};
-
-const SpeechRecognition = (window as unknown as { SpeechRecognition?: SpeechRecognitionConstructor; webkitSpeechRecognition?: SpeechRecognitionConstructor }).SpeechRecognition || (window as unknown as { webkitSpeechRecognition?: SpeechRecognitionConstructor }).webkitSpeechRecognition;
-    if (!SpeechRecognition) return;
-    const recognition = new SpeechRecognition();
-    
-    recognition.lang = 'zh-CN';
-    recognition.interimResults = true;
-    recognition.maxAlternatives = 1;
-
-    recognition.onstart = () => setIsListening(true);
-    recognition.onend = () => setIsListening(false);
-    
-    recognition.onresult = (event: SpeechRecognitionEvent) => {
-      const transcript = Array.from(event.results)
-        .map((result) => result[0].transcript)
-        .join('');
-      setLocalInput(transcript);
-    };
-
-    recognition.onerror = () => {
-      setIsListening(false);
-    };
-
-    if (isListening) {
-      recognition.stop();
-    } else {
-      recognition.start();
-    }
-  };
-
   return (
     <div className="min-h-screen bg-bg">
       <a href="#main-content" className="fixed top-4 left-4 z-200 px-4 py-2 bg-accent text-bg font-medium text-sm rounded-lg opacity-0 hover:opacity-100 transition-opacity focus:opacity-100">跳过导航，直接到内容</a>
@@ -196,13 +129,6 @@ const SpeechRecognition = (window as unknown as { SpeechRecognition?: SpeechReco
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_40%,rgba(212,165,116,0.06)_0%,transparent_70%),radial-gradient(ellipse_40%_60%_at_20%_80%,rgba(139,110,78,0.04)_0%,transparent_60%),radial-gradient(ellipse_50%_40%_at_80%_20%,rgba(201,149,106,0.03)_0%,transparent_60%)] pointer-events-none" />
 
           <div className="relative z-2 text-center max-w-4xl">
-            <p 
-              className="inline-block text-xs font-medium tracking-[0.08em] text-accent mb-6 opacity-0 translate-y-5"
-              style={{ animation: 'heroFadeUp 0.8s cubic-bezier(0.16,1,0.3,1) 0.2s forwards' }}
-            >
-              为每一个想写书的人
-            </p>
-            
             <h1 
               className="font-display text-[clamp(2.5rem,6vw,4.5rem)] font-bold text-text leading-[1.2] tracking-[-0.02em] mb-6 opacity-0 translate-y-7"
               style={{ animation: 'heroFadeUp 1s cubic-bezier(0.16,1,0.3,1) 0.4s forwards' }}
@@ -219,12 +145,12 @@ const SpeechRecognition = (window as unknown as { SpeechRecognition?: SpeechReco
             </p>
 
             <div 
-              className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 max-w-md mx-auto opacity-0 translate-y-5"
+              className="flex flex-col gap-4 max-w-md mx-auto opacity-0 translate-y-5"
               style={{ animation: 'heroFadeUp 0.8s cubic-bezier(0.16,1,0.3,1) 0.8s forwards' }}
             >
               <textarea
                 name="book-idea"
-                className="flex-1 px-6 py-4 bg-surface border border-border rounded-xl text-text font-body text-base resize-none outline-none focus:border-accent focus:shadow-[0_0_0_3px_rgba(212,165,116,0.15)] transition-all duration-200"
+                className="w-full px-6 py-4 bg-surface border border-border rounded-xl text-text font-body text-base resize-none outline-none focus:border-accent focus:shadow-[0_0_0_3px_rgba(212,165,116,0.15)] transition-all duration-200"
                 rows={3}
                 placeholder="用一两句话描述你想写的书……"
                 aria-label="描述你想写的书"
@@ -240,51 +166,33 @@ const SpeechRecognition = (window as unknown as { SpeechRecognition?: SpeechReco
                 spellCheck={false}
               />
               
-              <div className="flex flex-col sm:flex-row gap-3">
-                <button 
-                  className="w-14 h-14 sm:w-auto sm:h-auto sm:px-4 bg-surface border border-border rounded-lg text-text-muted hover:bg-surface-hover hover:text-text-secondary hover:border-text-muted transition-all duration-200 flex items-center justify-center flex-shrink-0"
-                  aria-label="语音输入"
-                  onClick={handleVoiceClick}
-                >
-                  {isListening ? (
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="animate-pulse">
-                      <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
-                      <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
-                      <line x1="12" x2="12" y1="19" y2="22"/>
-                    </svg>
-                  ) : (
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
-                      <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
-                      <line x1="12" x2="12" y1="19" y2="22"/>
-                    </svg>
-                  )}
-                </button>
+              <p className="text-xs text-text-muted text-left pl-1">
+                建议用语音输入
+              </p>
 
-                <button
-                  onClick={handleSubmit}
-                  disabled={state.isLoading || !localInput.trim()}
-                  className="px-8 py-4 bg-accent text-bg font-semibold rounded-xl hover:bg-accent-hover hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(212,165,116,0.25)] active:translate-y-0 active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:transform-none disabled:hover:shadow-none flex items-center justify-center gap-2"
-                >
-                  {state.isLoading ? (
-                    <>
-                      <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-bg" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                      正在分析...
-                    </>
-                  ) : (
-                    <>
-                      开始探索
-                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M5 12h14"/>
-                        <path d="m12 5 7 7-7 7"/>
-                      </svg>
-                    </>
-                  )}
-                </button>
-              </div>
+              <button
+                onClick={handleSubmit}
+                disabled={state.isLoading || !localInput.trim()}
+                className="w-full py-4 bg-accent text-bg font-semibold rounded-xl hover:bg-accent-hover hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(212,165,116,0.25)] active:translate-y-0 active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:transform-none disabled:hover:shadow-none flex items-center justify-center gap-2"
+              >
+                {state.isLoading ? (
+                  <>
+                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-bg" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    正在分析...
+                  </>
+                ) : (
+                  <>
+                    开始探索
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M5 12h14"/>
+                      <path d="m12 5 7 7-7 7"/>
+                    </svg>
+                  </>
+                )}
+              </button>
             </div>
 
             <div aria-live="polite" className="mt-6">
@@ -301,7 +209,7 @@ const SpeechRecognition = (window as unknown as { SpeechRecognition?: SpeechReco
         </section>
 
         <section className="books-showcase relative py-[clamp(4rem,10vw,8rem)] overflow-hidden">
-          <div className="books-showcase-header text-center mb-16 px-4">
+          <div className="books-showcase-header text-center mb-16 px-4 reveal">
             <h2 className="font-display text-[clamp(1.75rem,4vw,2.75rem)] font-bold text-text tracking-[-0.02em] mb-4">
               在书的世界里找到你的位置
             </h2>
@@ -507,14 +415,14 @@ const SpeechRecognition = (window as unknown as { SpeechRecognition?: SpeechReco
         
         .reveal {
           opacity: 0;
+          transform: translateY(40px);
           transition: opacity 0.8s var(--ease-out-expo), transform 0.8s var(--ease-out-expo);
+          will-change: opacity, transform;
         }
         .reveal.visible {
           opacity: 1;
-          transform: none;
+          transform: translateY(0);
         }
-        .reveal-up { opacity: 0; transform: translateY(40px); }
-        .reveal-up.visible { opacity: 1; transform: translateY(0); }
         
         @media (prefers-reduced-motion: reduce) {
           *, *::before, *::after {
@@ -522,6 +430,7 @@ const SpeechRecognition = (window as unknown as { SpeechRecognition?: SpeechReco
             animation-iteration-count: 1 !important;
             transition-duration: 0.01ms !important;
           }
+          .reveal { opacity: 1; transform: none; }
         }
       `}</style>
     </div>

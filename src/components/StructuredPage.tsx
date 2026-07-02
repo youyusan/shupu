@@ -1,13 +1,17 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAppState } from '@/lib/state/app-context';
 import { StepIndicator } from './StepIndicator';
+import type { StructuredIdea } from '@/types';
 
 export function StructuredPage() {
   const { state, dispatch } = useAppState();
-  const router = useRouter(); 
+  const router = useRouter();
+  const [editingField, setEditingField] = useState<keyof StructuredIdea | null>(null);
+  const [editValue, setEditValue] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!state.structuredIdea) {
@@ -35,6 +39,62 @@ export function StructuredPage() {
   const handleBack = () => {
     router.push('/');
   };
+
+  const handleTagClick = (key: keyof StructuredIdea, value: string) => {
+    setEditingField(key);
+    setEditValue(value);
+  };
+
+  const handleSaveEdit = () => {
+    if (!editingField || !editValue.trim()) {
+      setEditingField(null);
+      return;
+    }
+    const updatedIdea: StructuredIdea = {
+      ...state.editedIdea!,
+      [editingField]: editValue.trim(),
+    };
+    dispatch({ type: 'SET_EDITED_IDEA', payload: updatedIdea });
+    setEditingField(null);
+  };
+
+  const handleAdjust = async () => {
+    dispatch({ type: 'SET_LOADING', payload: true });
+    dispatch({ type: 'SET_ERROR', payload: null });
+
+    try {
+      const response = await fetch('/api/structure', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          rawInput: state.rawInput,
+          previousIdea: state.editedIdea,
+          feedback: '不太对，帮我调整'
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!data.success) {
+        dispatch({ type: 'SET_ERROR', payload: data.error?.message || '请求失败' });
+        return;
+      }
+
+      dispatch({ type: 'SET_STRUCTURED_IDEA', payload: data.data });
+      dispatch({ type: 'SET_EDITED_IDEA', payload: data.data });
+    } catch {
+      dispatch({ type: 'SET_ERROR', payload: '网络错误，请稍后重试' });
+    } finally {
+      dispatch({ type: 'SET_LOADING', payload: false });
+    }
+  };
+
+  useEffect(() => {
+    if (editingField && inputRef.current) {
+      inputRef.current.focus();
+      inputRef.current.select();
+    }
+  }, [editingField]);
 
   const handleContinue = async () => {
     dispatch({ type: 'SET_LOADING', payload: true });
@@ -133,33 +193,57 @@ export function StructuredPage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
             {tags.map(({ label, key, value, dotClass }, index) => (
-              <button
+              <div
                 key={key}
-                onClick={() => {}}
-                className="flex items-center gap-3 p-4 bg-surface border border-border-subtle rounded-xl text-left hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(0,0,0,0.3),0_0_0_1px_var(--color-border)] hover:border-border hover:bg-surface-hover active:translate-y-0 active:scale-[0.99] transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg anim"
+                className="flex items-center gap-3 p-4 bg-surface border border-border-subtle rounded-xl text-left hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(0,0,0,0.3),0_0_0_1px_var(--color-border)] hover:border-border hover:bg-surface-hover active:translate-y-0 active:scale-[0.99] transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg anim group"
                 data-delay={index + 4}
-                aria-label={`${label}：${value}，点击调整`}
               >
                 <span className={`w-2 h-2 rounded-full flex-shrink-0 ${dotClass}`} aria-hidden="true" />
                 <div className="flex-1 min-w-0">
                   <span className="block text-xs text-text-muted tracking-[0.04em] mb-1">{label}</span>
-                  <span className="block text-sm font-medium text-text leading-[1.4]">{value}</span>
+                  {editingField === key ? (
+                    <input
+                      ref={inputRef}
+                      type="text"
+                      value={editValue}
+                      onChange={(e) => setEditValue(e.target.value)}
+                      onBlur={handleSaveEdit}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          handleSaveEdit();
+                        } else if (e.key === 'Escape') {
+                          setEditingField(null);
+                        }
+                      }}
+                      className="w-full text-sm font-medium text-text bg-transparent border-b border-accent outline-none focus:border-accent-hover"
+                    />
+                  ) : (
+                    <button
+                      onClick={() => handleTagClick(key, value)}
+                      className="text-left w-full"
+                      aria-label={`${label}：${value}，点击调整`}
+                    >
+                      <span className="block text-sm font-medium text-text leading-[1.4]">{value}</span>
+                    </button>
+                  )}
                 </div>
-                <svg 
-                  className="w-4 h-4 text-text-muted opacity-0 group-hover:opacity-60 transition-opacity flex-shrink-0" 
-                  xmlns="http://www.w3.org/2000/svg" 
-                  viewBox="0 0 24 24" 
-                  fill="none" 
-                  stroke="currentColor" 
-                  strokeWidth="2" 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                  aria-hidden="true"
-                >
-                  <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
-                  <path d="m15 5 4 4"/>
-                </svg>
-              </button>
+                {editingField !== key && (
+                  <svg 
+                    className="w-4 h-4 text-text-muted opacity-0 group-hover:opacity-60 transition-opacity flex-shrink-0" 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    viewBox="0 0 24 24" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    strokeWidth="2" 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round" 
+                    aria-hidden="true"
+                  >
+                    <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
+                    <path d="m15 5 4 4"/>
+                  </svg>
+                )}
+              </div>
             ))}
           </div>
 
@@ -199,8 +283,9 @@ export function StructuredPage() {
             </button>
 
             <button
-              onClick={() => {}}
-              className="w-full max-w-xs py-3.5 px-8 bg-transparent text-accent border border-border rounded-full font-medium hover:bg-accent-dim hover:border-accent active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-2 anim"
+              onClick={handleAdjust}
+              disabled={state.isLoading}
+              className="w-full max-w-xs py-3.5 px-8 bg-transparent text-accent border border-border rounded-full font-medium hover:bg-accent-dim hover:border-accent active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:transform-none transition-all duration-200 flex items-center justify-center gap-2 anim"
               data-delay="7"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

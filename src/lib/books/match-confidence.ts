@@ -24,5 +24,13 @@ export function isHighConfidence(
     (a) => a.includes(aiAuthor) || aiAuthor.includes(a)
   );
 
-  return titleMatch && authorMatch;
+  if (titleMatch && authorMatch) return true;
+  if (titleMatch && gbAuthors.length === 0) return true;
+  if (gbTitle.length > 0 && aiTitle.length > 0) {
+    const minLength = Math.min(gbTitle.length, aiTitle.length);
+    const matchLength = Array.from(gbTitle).filter((char, i) => char === aiTitle[i]).length;
+    if (matchLength >= minLength * 0.6) return true;
+  }
+  
+  return false;
 }

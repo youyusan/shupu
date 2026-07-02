@@ -8,7 +8,7 @@ import { StepIndicator } from './StepIndicator';
 
 const directionLabels: Record<Direction, { label: string; color: string }> = {
   'anchor': { label: '你的想法最接近这里', color: '#4ECDC4' },
-  'genre-variant': { label: '换个体裁试试', color: '#F59E0B' },
+  'genre-variant': { label: '不同的题材', color: '#F59E0B' },
   'theme-neighbor': { label: '相近的主题', color: '#8B5CF6' },
   'reader-up': { label: '更专业的方向', color: '#06B6D4' },
   'reader-down': { label: '更通俗的方向', color: '#10B981' },
@@ -358,6 +358,31 @@ export function MapPage() {
                   {selectedBook.description && (
                     <p className="modal-desc">{selectedBook.description}</p>
                   )}
+                  <div className="modal-links">
+                    <a 
+                      href={`https://book.douban.com/subject_search?search_text=${encodeURIComponent(selectedBook.title + ' ' + selectedBook.author)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="modal-link"
+                    >
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4" aria-hidden="true">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z" />
+                      </svg>
+                      豆瓣读书
+                    </a>
+                    <a 
+                      href={`https://www.goodreads.com/search?q=${encodeURIComponent(selectedBook.title + ' ' + selectedBook.author)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="modal-link"
+                    >
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4" aria-hidden="true">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
+                        <path d="M12 6l4 5-4 5" />
+                      </svg>
+                      Goodreads
+                    </a>
+                  </div>
                 </div>
               </>
             )}
@@ -881,6 +906,39 @@ export function MapPage() {
           margin-top: 1rem;
           padding-top: 1rem;
           border-top: 1px solid rgba(80, 120, 130, 0.1);
+        }
+
+        .modal-links {
+          display: flex;
+          gap: 1rem;
+          margin-top: 1.25rem;
+          padding-top: 1rem;
+          border-top: 1px solid rgba(80, 120, 130, 0.1);
+        }
+
+        .modal-link {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
+          padding: 0.5rem 1rem;
+          font-size: 0.875rem;
+          color: #4ECDC4;
+          background: rgba(78, 205, 196, 0.08);
+          border: 1px solid rgba(78, 205, 196, 0.2);
+          border-radius: 8px;
+          text-decoration: none;
+          transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+        }
+
+        .modal-link:hover {
+          background: rgba(78, 205, 196, 0.15);
+          border-color: rgba(78, 205, 196, 0.4);
+          color: #6EE7B7;
+        }
+
+        .modal-link:focus-visible {
+          outline: none;
+          box-shadow: 0 0 0 2px rgba(78, 205, 196, 0.5);
         }
 
         @media (max-width: 768px) {

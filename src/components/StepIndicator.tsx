@@ -23,13 +23,15 @@ export function StepIndicator({ currentStep }: StepIndicatorProps) {
 
         return (
           <div key={step.key} className="flex items-center">
-            <div className="flex items-center justify-center w-8 h-8 rounded-full text-sm font-medium transition-all duration-300">
+            <div className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold transition-all duration-300 ${
+              isActive ? 'ring-2 ring-accent ring-offset-2 ring-offset-bg' : ''
+            }`}>
               {isActive ? (
                 <span className="bg-accent text-bg">{index + 1}</span>
               ) : isPast ? (
-                <span className="bg-accent-dim text-accent">{index + 1}</span>
+                <span className="bg-accent/20 text-accent">{index + 1}</span>
               ) : (
-                <span className="bg-surface text-text-muted border border-border">
+                <span className="bg-surface text-text-muted border border-border-subtle">
                   {index + 1}
                 </span>
               )}
@@ -37,9 +39,9 @@ export function StepIndicator({ currentStep }: StepIndicatorProps) {
             <span
               className={`ml-2 text-sm transition-colors duration-300 ${
                 isActive
-                  ? 'text-text font-medium'
+                  ? 'text-text font-semibold'
                   : isPast
-                  ? 'text-accent'
+                  ? 'text-text-secondary'
                   : 'text-text-muted'
               }`}
             >
@@ -48,7 +50,7 @@ export function StepIndicator({ currentStep }: StepIndicatorProps) {
             {index < steps.length - 1 && (
               <div
                 className={`w-8 sm:w-12 h-0.5 mx-2 transition-colors duration-300 ${
-                  isPast ? 'bg-accent' : 'bg-border'
+                  isPast ? 'bg-accent' : 'bg-border-subtle'
                 }`}
               />
             )}
