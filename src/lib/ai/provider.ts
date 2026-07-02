@@ -35,23 +35,36 @@ export class DeepSeekProvider implements ModelProvider {
       ...(responseFormat === 'json' ? { response_format: { type: 'json_object' } } : {}),
     };
     
-    const response = await fetchWithTimeout('https://api.deepseek.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${this.apiKey}`,
-      },
-      body: JSON.stringify(requestBody),
-      timeout: 30000,
-    });
+    const maxRetries = 3;
+    const retryDelay = 1000;
     
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`DeepSeek API 错误: ${response.status} - ${errorText}`);
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      const response = await fetchWithTimeout('https://api.deepseek.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${this.apiKey}`,
+        },
+        body: JSON.stringify(requestBody),
+        timeout: 30000,
+      });
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        
+        if (response.status === 503 && attempt < maxRetries) {
+          await new Promise(resolve => setTimeout(resolve, retryDelay * attempt));
+          continue;
+        }
+        
+        throw new Error(`DeepSeek API 错误: ${response.status} - ${errorText}`);
+      }
+      
+      const data = await response.json();
+      return data.choices?.[0]?.message?.content || '';
     }
     
-    const data = await response.json();
-    return data.choices?.[0]?.message?.content || '';
+    throw new Error('DeepSeek API 服务繁忙，请稍后重试');
   }
 }
 

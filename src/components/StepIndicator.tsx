@@ -1,0 +1,60 @@
+'use client';
+
+import type { Step } from '@/lib/state/app-context';
+
+interface StepIndicatorProps {
+  currentStep: Step;
+}
+
+const steps: { key: Step; label: string }[] = [
+  { key: 'home', label: '输入想法' },
+  { key: 'structured', label: '确认理解' },
+  { key: 'map', label: '参考地图' },
+];
+
+export function StepIndicator({ currentStep }: StepIndicatorProps) {
+  const currentIndex = steps.findIndex((s) => s.key === currentStep);
+
+  return (
+    <div className="flex items-center gap-2 sm:gap-4">
+      {steps.map((step, index) => {
+        const isActive = step.key === currentStep;
+        const isPast = index < currentIndex;
+
+        return (
+          <div key={step.key} className="flex items-center">
+            <div className="flex items-center justify-center w-8 h-8 rounded-full text-sm font-medium transition-all duration-300">
+              {isActive ? (
+                <span className="bg-accent text-bg">{index + 1}</span>
+              ) : isPast ? (
+                <span className="bg-accent-dim text-accent">{index + 1}</span>
+              ) : (
+                <span className="bg-surface text-text-muted border border-border">
+                  {index + 1}
+                </span>
+              )}
+            </div>
+            <span
+              className={`ml-2 text-sm transition-colors duration-300 ${
+                isActive
+                  ? 'text-text font-medium'
+                  : isPast
+                  ? 'text-accent'
+                  : 'text-text-muted'
+              }`}
+            >
+              {step.label}
+            </span>
+            {index < steps.length - 1 && (
+              <div
+                className={`w-8 sm:w-12 h-0.5 mx-2 transition-colors duration-300 ${
+                  isPast ? 'bg-accent' : 'bg-border'
+                }`}
+              />
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}

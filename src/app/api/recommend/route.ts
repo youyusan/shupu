@@ -4,6 +4,7 @@ import { parseJsonFromLlm } from '@/lib/ai/json-parser';
 import { recommendRequestSchema, recommendationsSchema } from '@/lib/ai/validator';
 import { recommendPrompt } from '@/lib/prompts';
 import { rateLimiter } from '@/lib/rate-limiter';
+import { enrichBook } from '@/lib/books/enrich';
 import type { ApiResponse, BookRecommendation, ErrorCode } from '@/types';
 
 function getClientIp(request: NextRequest): string {
@@ -86,7 +87,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const parsed = parseJsonFromLlm(aiResponse);
     const result = recommendationsSchema.parse(parsed);
     
-    return createResponse<BookRecommendation[]>(result, rateLimitResult);
+    const enrichedPromises = result.map((book) => enrichBook(book));
+    const enrichedResults = await Promise.all(enrichedPromises);
+    
+    return createResponse<BookRecommendation[]>(enrichedResults, rateLimitResult);
   } catch (error) {
     console.error('Recommend API error:', error);
     
