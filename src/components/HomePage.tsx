@@ -31,7 +31,6 @@ export default function HomePage() {
   const { state, dispatch } = useAppState();
   const router = useRouter();
   const [localInput, setLocalInput] = useState(state.rawInput);
-  const [isListening, setIsListening] = useState(false);
   const marqueeRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -101,72 +100,6 @@ export default function HomePage() {
     }
   };
 
-  const handleVoiceClick = () => {
-    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-      alert('您的浏览器不支持语音输入');
-      return;
-    }
-
-    interface SpeechRecognitionEvent {
-    results: SpeechRecognitionResultList;
-}
-
-interface SpeechRecognitionResultList {
-    [index: number]: SpeechRecognitionResult;
-    length: number;
-}
-
-interface SpeechRecognitionResult {
-    [index: number]: SpeechRecognitionAlternative;
-}
-
-interface SpeechRecognitionAlternative {
-    transcript: string;
-}
-
-type SpeechRecognitionConstructor = {
-    new (): {
-        lang: string;
-        interimResults: boolean;
-        maxAlternatives: number;
-        onstart?: () => void;
-        onend?: () => void;
-        onresult?: (event: SpeechRecognitionEvent) => void;
-        onerror?: () => void;
-        start(): void;
-        stop(): void;
-    };
-};
-
-const SpeechRecognition = (window as unknown as { SpeechRecognition?: SpeechRecognitionConstructor; webkitSpeechRecognition?: SpeechRecognitionConstructor }).SpeechRecognition || (window as unknown as { webkitSpeechRecognition?: SpeechRecognitionConstructor }).webkitSpeechRecognition;
-    if (!SpeechRecognition) return;
-    const recognition = new SpeechRecognition();
-    
-    recognition.lang = 'zh-CN';
-    recognition.interimResults = true;
-    recognition.maxAlternatives = 1;
-
-    recognition.onstart = () => setIsListening(true);
-    recognition.onend = () => setIsListening(false);
-    
-    recognition.onresult = (event: SpeechRecognitionEvent) => {
-      const transcript = Array.from(event.results)
-        .map((result) => result[0].transcript)
-        .join('');
-      setLocalInput(transcript);
-    };
-
-    recognition.onerror = () => {
-      setIsListening(false);
-    };
-
-    if (isListening) {
-      recognition.stop();
-    } else {
-      recognition.start();
-    }
-  };
-
   return (
     <div className="min-h-screen bg-bg">
       <a href="#main-content" className="fixed top-4 left-4 z-200 px-4 py-2 bg-accent text-bg font-medium text-sm rounded-lg opacity-0 hover:opacity-100 transition-opacity focus:opacity-100">跳过导航，直接到内容</a>
@@ -196,13 +129,6 @@ const SpeechRecognition = (window as unknown as { SpeechRecognition?: SpeechReco
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_40%,rgba(212,165,116,0.06)_0%,transparent_70%),radial-gradient(ellipse_40%_60%_at_20%_80%,rgba(139,110,78,0.04)_0%,transparent_60%),radial-gradient(ellipse_50%_40%_at_80%_20%,rgba(201,149,106,0.03)_0%,transparent_60%)] pointer-events-none" />
 
           <div className="relative z-2 text-center max-w-4xl">
-            <p 
-              className="inline-block text-xs font-medium tracking-[0.08em] text-accent mb-6 opacity-0 translate-y-5"
-              style={{ animation: 'heroFadeUp 0.8s cubic-bezier(0.16,1,0.3,1) 0.2s forwards' }}
-            >
-              为每一个想写书的人
-            </p>
-            
             <h1 
               className="font-display text-[clamp(2.5rem,6vw,4.5rem)] font-bold text-text leading-[1.2] tracking-[-0.02em] mb-6 opacity-0 translate-y-7"
               style={{ animation: 'heroFadeUp 1s cubic-bezier(0.16,1,0.3,1) 0.4s forwards' }}
@@ -219,12 +145,12 @@ const SpeechRecognition = (window as unknown as { SpeechRecognition?: SpeechReco
             </p>
 
             <div 
-              className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 max-w-md mx-auto opacity-0 translate-y-5"
+              className="flex flex-col gap-4 max-w-md mx-auto opacity-0 translate-y-5"
               style={{ animation: 'heroFadeUp 0.8s cubic-bezier(0.16,1,0.3,1) 0.8s forwards' }}
             >
               <textarea
                 name="book-idea"
-                className="flex-1 px-6 py-4 bg-surface border border-border rounded-xl text-text font-body text-base resize-none outline-none focus:border-accent focus:shadow-[0_0_0_3px_rgba(212,165,116,0.15)] transition-all duration-200"
+                className="w-full px-6 py-4 bg-surface border border-border rounded-xl text-text font-body text-base resize-none outline-none focus:border-accent focus:shadow-[0_0_0_3px_rgba(212,165,116,0.15)] transition-all duration-200"
                 rows={3}
                 placeholder="用一两句话描述你想写的书……"
                 aria-label="描述你想写的书"
@@ -240,51 +166,33 @@ const SpeechRecognition = (window as unknown as { SpeechRecognition?: SpeechReco
                 spellCheck={false}
               />
               
-              <div className="flex flex-col sm:flex-row gap-3">
-                <button 
-                  className="w-14 h-14 sm:w-auto sm:h-auto sm:px-4 bg-surface border border-border rounded-lg text-text-muted hover:bg-surface-hover hover:text-text-secondary hover:border-text-muted transition-all duration-200 flex items-center justify-center flex-shrink-0"
-                  aria-label="语音输入"
-                  onClick={handleVoiceClick}
-                >
-                  {isListening ? (
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="animate-pulse">
-                      <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
-                      <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
-                      <line x1="12" x2="12" y1="19" y2="22"/>
-                    </svg>
-                  ) : (
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
-                      <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
-                      <line x1="12" x2="12" y1="19" y2="22"/>
-                    </svg>
-                  )}
-                </button>
+              <p className="text-xs text-text-muted text-left pl-1">
+                建议用语音输入
+              </p>
 
-                <button
-                  onClick={handleSubmit}
-                  disabled={state.isLoading || !localInput.trim()}
-                  className="px-8 py-4 bg-accent text-bg font-semibold rounded-xl hover:bg-accent-hover hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(212,165,116,0.25)] active:translate-y-0 active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:transform-none disabled:hover:shadow-none flex items-center justify-center gap-2"
-                >
-                  {state.isLoading ? (
-                    <>
-                      <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-bg" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                      正在分析...
-                    </>
-                  ) : (
-                    <>
-                      开始探索
-                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M5 12h14"/>
-                        <path d="m12 5 7 7-7 7"/>
-                      </svg>
-                    </>
-                  )}
-                </button>
-              </div>
+              <button
+                onClick={handleSubmit}
+                disabled={state.isLoading || !localInput.trim()}
+                className="w-full py-4 bg-accent text-bg font-semibold rounded-xl hover:bg-accent-hover hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(212,165,116,0.25)] active:translate-y-0 active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:transform-none disabled:hover:shadow-none flex items-center justify-center gap-2"
+              >
+                {state.isLoading ? (
+                  <>
+                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-bg" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    正在分析...
+                  </>
+                ) : (
+                  <>
+                    开始探索
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M5 12h14"/>
+                      <path d="m12 5 7 7-7 7"/>
+                    </svg>
+                  </>
+                )}
+              </button>
             </div>
 
             <div aria-live="polite" className="mt-6">
@@ -301,7 +209,7 @@ const SpeechRecognition = (window as unknown as { SpeechRecognition?: SpeechReco
         </section>
 
         <section className="books-showcase relative py-[clamp(4rem,10vw,8rem)] overflow-hidden">
-          <div className="books-showcase-header text-center mb-16 px-4">
+          <div className="books-showcase-header text-center mb-16 px-4 reveal">
             <h2 className="font-display text-[clamp(1.75rem,4vw,2.75rem)] font-bold text-text tracking-[-0.02em] mb-4">
               在书的世界里找到你的位置
             </h2>
@@ -507,14 +415,14 @@ const SpeechRecognition = (window as unknown as { SpeechRecognition?: SpeechReco
         
         .reveal {
           opacity: 0;
+          transform: translateY(40px);
           transition: opacity 0.8s var(--ease-out-expo), transform 0.8s var(--ease-out-expo);
+          will-change: opacity, transform;
         }
         .reveal.visible {
           opacity: 1;
-          transform: none;
+          transform: translateY(0);
         }
-        .reveal-up { opacity: 0; transform: translateY(40px); }
-        .reveal-up.visible { opacity: 1; transform: translateY(0); }
         
         @media (prefers-reduced-motion: reduce) {
           *, *::before, *::after {
@@ -522,6 +430,7 @@ const SpeechRecognition = (window as unknown as { SpeechRecognition?: SpeechReco
             animation-iteration-count: 1 !important;
             transition-duration: 0.01ms !important;
           }
+          .reveal { opacity: 1; transform: none; }
         }
       `}</style>
     </div>
