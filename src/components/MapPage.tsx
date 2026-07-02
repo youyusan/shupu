@@ -64,46 +64,48 @@ export function MapPage() {
 
   const renderBookNode = (book: BookRecommendation, index: number, isCenter = false) => {
     return (
-      <div
+      <button
         key={book.title + index}
         className={`book-node ${isCenter ? 'book-node--center' : ''}`}
         onClick={() => setSelectedBook(book)}
+        aria-label={`查看 ${book.title} 的详情`}
       >
-        <div className="book-node__cover">
+        <span className="book-node__cover">
           {book.coverImage ? (
             <img src={book.coverImage} alt={book.title} className="book-node__img" />
           ) : (
-            <div className="book-node__placeholder">📚</div>
+            <span className="book-node__placeholder" aria-hidden="true">📚</span>
           )}
-        </div>
-        <div className="book-node__info">
-          <div className="book-node__title">{book.title}</div>
-          <div className="book-node__author">{book.author}</div>
-        </div>
-      </div>
+        </span>
+        <span className="book-node__info">
+          <span className="book-node__title">{book.title}</span>
+          <span className="book-node__author">{book.author}</span>
+        </span>
+      </button>
     );
   };
 
   const renderMobileCard = (book: BookRecommendation, index: number, isCenter = false) => {
     return (
-      <div
+      <button
         key={book.title + index}
         className={`mobile-card ${isCenter ? 'mobile-card--center' : ''}`}
         onClick={() => setSelectedBook(book)}
+        aria-label={`查看 ${book.title} 的详情`}
       >
-        <div className="mobile-card__cover">
+        <span className="mobile-card__cover">
           {book.coverImage ? (
             <img src={book.coverImage} alt={book.title} className="mobile-card__img" />
           ) : (
-            <div className="mobile-card__placeholder">📚</div>
+            <span className="mobile-card__placeholder" aria-hidden="true">📚</span>
           )}
-        </div>
-        <div className="mobile-card__info">
-          <div className="mobile-card__title">{book.title}</div>
-          <div className="mobile-card__author">{book.author}</div>
-          <div className="mobile-card__summary">{book.coreSummary}</div>
-        </div>
-      </div>
+        </span>
+        <span className="mobile-card__info">
+          <span className="mobile-card__title">{book.title}</span>
+          <span className="mobile-card__author">{book.author}</span>
+          <span className="mobile-card__summary">{book.coreSummary}</span>
+        </span>
+      </button>
     );
   };
 
@@ -215,7 +217,7 @@ export function MapPage() {
       {selectedBook && (
         <div className="modal-overlay" onClick={() => setSelectedBook(null)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <button className="modal-close" onClick={() => setSelectedBook(null)}>×</button>
+            <button className="modal-close" onClick={() => setSelectedBook(null)} aria-label="关闭详情弹窗">×</button>
             <div className="modal-cover">
               {selectedBook.coverImage ? (
                 <img src={selectedBook.coverImage} alt={selectedBook.title} />
@@ -294,7 +296,7 @@ export function MapPage() {
           border: 1px solid rgba(78, 205, 196, 0.2);
           border-radius: 8px;
           cursor: pointer;
-          transition: all 0.2s;
+          transition: background-color 0.2s, border-color 0.2s;
         }
 
         .nav__back:hover, .nav__action:hover {
@@ -376,7 +378,7 @@ export function MapPage() {
           border: 1px solid rgba(80, 120, 130, 0.2);
           border-radius: 12px;
           cursor: pointer;
-          transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+          transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s, border-color 0.3s, box-shadow 0.3s;
           z-index: 10;
           max-width: 160px;
         }
@@ -557,7 +559,7 @@ export function MapPage() {
           border: 1px solid rgba(80, 120, 130, 0.2);
           border-radius: 8px;
           cursor: pointer;
-          transition: all 0.2s;
+          transition: color 0.2s, border-color 0.2s;
         }
 
         .footer__btn:hover {
@@ -575,6 +577,7 @@ export function MapPage() {
           align-items: center;
           justify-content: center;
           padding: 1rem;
+          overscroll-behavior: contain;
         }
 
         .modal-content {
@@ -795,6 +798,21 @@ export function MapPage() {
             margin-top: 0.5rem;
             margin-bottom: 0.25rem;
           }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          *, *::before, *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+          }
+          .cline, .cgLOW { animation: none; stroke-dashoffset: 0; }
+          .node-tl, .node-tr, .node-bl, .node-br, .node-center {
+            opacity: 1;
+            animation: none;
+            transform: none;
+          }
+          .map-hint { opacity: 0.5; animation: none; }
         }
       `}</style>
     </div>

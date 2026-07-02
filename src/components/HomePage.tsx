@@ -169,6 +169,7 @@ const SpeechRecognition = (window as unknown as { SpeechRecognition?: SpeechReco
 
   return (
     <div className="min-h-screen bg-bg">
+      <a href="#main-content" className="fixed top-4 left-4 z-200 px-4 py-2 bg-accent text-bg font-medium text-sm rounded-lg opacity-0 hover:opacity-100 transition-opacity focus:opacity-100">跳过导航，直接到内容</a>
       <nav className="fixed top-0 left-0 right-0 z-100 px-4 sm:px-8 py-4 flex items-center justify-between bg-[rgba(10,10,12,0.7)] backdrop-blur-custom border-b border-border-subtle transition-all duration-300">
         <div className="font-display text-xl font-bold text-text tracking-[0.02em]">
           书<span className="text-accent">谱</span>
@@ -187,7 +188,7 @@ const SpeechRecognition = (window as unknown as { SpeechRecognition?: SpeechReco
         </ul>
       </nav>
 
-      <main>
+      <main id="main-content">
         <section id="hero" className="hero relative min-h-screen flex flex-col items-center justify-center px-4 sm:px-8 pt-20 pb-16 overflow-hidden">
           <div className="absolute inset-0 bg-[url('/assets/hero-bg.jpg')] center/cover opacity-[0.15] saturate-[0.6] pointer-events-none" />
           <div className="absolute inset-0 bg-gradient-to-b from-bg via-transparent to-bg pointer-events-none" />
@@ -222,6 +223,7 @@ const SpeechRecognition = (window as unknown as { SpeechRecognition?: SpeechReco
               style={{ animation: 'heroFadeUp 0.8s cubic-bezier(0.16,1,0.3,1) 0.8s forwards' }}
             >
               <textarea
+                name="book-idea"
                 className="flex-1 px-6 py-4 bg-surface border border-border rounded-xl text-text font-body text-base resize-none outline-none focus:border-accent focus:shadow-[0_0_0_3px_rgba(212,165,116,0.15)] transition-all duration-200"
                 rows={3}
                 placeholder="用一两句话描述你想写的书……"
@@ -234,6 +236,8 @@ const SpeechRecognition = (window as unknown as { SpeechRecognition?: SpeechReco
                   }
                 }}
                 maxLength={500}
+                autoComplete="off"
+                spellCheck={false}
               />
               
               <div className="flex flex-col sm:flex-row gap-3">
@@ -283,14 +287,16 @@ const SpeechRecognition = (window as unknown as { SpeechRecognition?: SpeechReco
               </div>
             </div>
 
-            {state.error && (
-              <div className="mt-6 inline-flex items-center gap-2 px-4 py-2 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400">
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                  <path fillRule="evenodd" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" clipRule="evenodd" />
-                </svg>
-                <span>{state.error}</span>
-              </div>
-            )}
+            <div aria-live="polite" className="mt-6">
+              {state.error && (
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400">
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path fillRule="evenodd" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" clipRule="evenodd" />
+                  </svg>
+                  <span>{state.error}</span>
+                </div>
+              )}
+            </div>
           </div>
         </section>
 
@@ -307,8 +313,8 @@ const SpeechRecognition = (window as unknown as { SpeechRecognition?: SpeechReco
           <div ref={marqueeRef} className="book-marquee relative w-full overflow-hidden py-8">
             <div className="book-row book-row--left flex gap-6 w-max" style={{ animation: 'slideFromLeft 30s linear infinite', animationPlayState: 'paused' }}>
               {[...marqueeBooks, ...marqueeBooks].map((book, index) => (
-                <div key={index} className="book-card flex-shrink-0 w-40 rounded-lg overflow-hidden bg-surface border border-border-subtle hover:-translate-y-2 hover:scale-[1.03] hover:shadow-[0_16px_48px_rgba(0,0,0,0.4),0_0_0_1px_var(--color-border)] transition-all duration-350 cursor-pointer">
-                  <div className="relative w-full aspect-[2/3]">
+                <button key={index} className="book-card flex-shrink-0 w-40 rounded-lg overflow-hidden bg-surface border border-border-subtle hover:-translate-y-2 hover:scale-[1.03] hover:shadow-[0_16px_48px_rgba(0,0,0,0.4),0_0_0_1px_var(--color-border)] transition-all duration-350 cursor-pointer" aria-label={`查看 ${book.title}，作者 ${book.author}`}>
+                  <span className="relative w-full aspect-[2/3] block">
                     <Image 
                       src={book.cover} 
                       alt={book.title} 
@@ -316,19 +322,19 @@ const SpeechRecognition = (window as unknown as { SpeechRecognition?: SpeechReco
                       fill
                       priority={index < 4}
                     />
-                  </div>
-                  <div className="p-3">
-                    <div className="text-xs font-semibold text-text truncate">{book.title}</div>
-                    <div className="text-[10px] text-text-muted mt-1 truncate">{book.author}</div>
-                  </div>
-                </div>
+                  </span>
+                  <span className="p-3 block">
+                    <span className="text-xs font-semibold text-text truncate block">{book.title}</span>
+                    <span className="text-[10px] text-text-muted mt-1 truncate block">{book.author}</span>
+                  </span>
+                </button>
               ))}
             </div>
 
             <div className="book-row book-row--right flex gap-6 w-max mt-6" style={{ animation: 'slideFromRight 30s linear infinite', animationPlayState: 'paused' }}>
               {[...marqueeBooks2, ...marqueeBooks2].map((book, index) => (
-                <div key={index} className="book-card flex-shrink-0 w-40 rounded-lg overflow-hidden bg-surface border border-border-subtle hover:-translate-y-2 hover:scale-[1.03] hover:shadow-[0_16px_48px_rgba(0,0,0,0.4),0_0_0_1px_var(--color-border)] transition-all duration-350 cursor-pointer">
-                  <div className="relative w-full aspect-[2/3]">
+                <button key={index} className="book-card flex-shrink-0 w-40 rounded-lg overflow-hidden bg-surface border border-border-subtle hover:-translate-y-2 hover:scale-[1.03] hover:shadow-[0_16px_48px_rgba(0,0,0,0.4),0_0_0_1px_var(--color-border)] transition-all duration-350 cursor-pointer" aria-label={`查看 ${book.title}，作者 ${book.author}`}>
+                  <span className="relative w-full aspect-[2/3] block">
                     <Image 
                       src={book.cover} 
                       alt={book.title} 
@@ -336,12 +342,12 @@ const SpeechRecognition = (window as unknown as { SpeechRecognition?: SpeechReco
                       fill
                       priority={index < 4}
                     />
-                  </div>
-                  <div className="p-3">
-                    <div className="text-xs font-semibold text-text truncate">{book.title}</div>
-                    <div className="text-[10px] text-text-muted mt-1 truncate">{book.author}</div>
-                  </div>
-                </div>
+                  </span>
+                  <span className="p-3 block">
+                    <span className="text-xs font-semibold text-text truncate block">{book.title}</span>
+                    <span className="text-[10px] text-text-muted mt-1 truncate block">{book.author}</span>
+                  </span>
+                </button>
               ))}
             </div>
 

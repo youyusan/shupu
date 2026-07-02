@@ -136,7 +136,7 @@ export function StructuredPage() {
               <button
                 key={key}
                 onClick={() => {}}
-                className="flex items-center gap-3 p-4 bg-surface border border-border-subtle rounded-xl text-left hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(0,0,0,0.3),0_0_0_1px_var(--color-border)] hover:border-border hover:bg-surface-hover active:translate-y-0 active:scale-[0.99] transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-bg anim"
+                className="flex items-center gap-3 p-4 bg-surface border border-border-subtle rounded-xl text-left hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(0,0,0,0.3),0_0_0_1px_var(--color-border)] hover:border-border hover:bg-surface-hover active:translate-y-0 active:scale-[0.99] transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg anim"
                 data-delay={index + 4}
                 aria-label={`${label}：${value}，点击调整`}
               >
@@ -167,14 +167,16 @@ export function StructuredPage() {
             点击任意标签可以调整
           </p>
 
-          {state.error && (
-            <div className="mb-6 inline-flex items-center gap-2 px-4 py-2 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400">
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                <path fillRule="evenodd" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" clipRule="evenodd" />
-              </svg>
-              <span>{state.error}</span>
-            </div>
-          )}
+          <div aria-live="polite" className="mb-6">
+            {state.error && (
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400">
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path fillRule="evenodd" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" clipRule="evenodd" />
+                </svg>
+                <span>{state.error}</span>
+              </div>
+            )}
+          </div>
 
           <div className="flex flex-col items-center gap-4">
             <button
