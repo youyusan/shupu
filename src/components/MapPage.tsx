@@ -459,16 +459,21 @@ export function MapPage() {
           z-index: 10;
           width: 100%;
           min-height: calc(100vh - 64px - 72px);
+          max-height: calc(100vh - 64px - 72px);
+          overflow-y: auto;
+          overflow-x: hidden;
         }
 
         .desktop-layout {
           position: relative;
           width: 100%;
-          min-height: calc(100vh - 64px - 72px);
+          min-height: 100%;
           display: flex;
+          flex-direction: column;
           align-items: center;
-          justify-content: center;
+          justify-content: flex-start;
           padding: 1.5rem;
+          padding-bottom: 4rem;
         }
 
         .mobile-layout {
@@ -521,11 +526,10 @@ export function MapPage() {
           z-index: 10;
           display: grid;
           grid-template-columns: 1fr auto 1fr;
-          grid-template-rows: auto 1fr auto;
-          gap: 1rem;
+          grid-template-rows: auto auto auto;
+          gap: 1.5rem;
           width: 100%;
           max-width: 900px;
-          height: 500px;
         }
 
         .grid-top {
@@ -541,8 +545,8 @@ export function MapPage() {
           grid-row: 2;
           display: flex;
           justify-content: center;
-          align-items: center;
-          gap: 2rem;
+          align-items: flex-start;
+          gap: 3rem;
         }
 
         .grid-left, .grid-right {
