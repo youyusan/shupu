@@ -6,25 +6,25 @@ import { useRouter } from 'next/navigation';
 import { useAppState } from '@/lib/state/app-context';
 
 const marqueeBooks = [
-  { title: '百年孤独', author: '加西亚·马尔克斯', cover: 'https://books.google.com/books/content?id=PZ8SBAAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api' },
-  { title: '小王子', author: '圣埃克苏佩里', cover: 'https://books.google.com/books/content?id=5K52BQAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api' },
-  { title: '人类简史', author: '尤瓦尔·赫拉利', cover: 'https://books.google.com/books/content?id=NWHxDwAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api' },
-  { title: '活着', author: '余华', cover: 'https://books.google.com/books/content?id=59QJAwAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api' },
-  { title: '三体', author: '刘慈欣', cover: 'https://books.google.com/books/content?id=7p7uBQAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api' },
-  { title: '设计心理学', author: '唐纳德·诺曼', cover: 'https://books.google.com/books/content?id=E7XxDwAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api' },
-  { title: '思考，快与慢', author: '丹尼尔·卡尼曼', cover: 'https://books.google.com/books/content?id=e8xWDwAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api' },
-  { title: '月亮与六便士', author: '毛姆', cover: 'https://books.google.com/books/content?id=R4kRDwAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api' },
+  { title: '百年孤独', author: '加西亚·马尔克斯', cover: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=book%20cover%20of%20One%20Hundred%20Years%20of%20Solitude%20by%20Gabriel%20Garcia%20Marquez%20Chinese%20edition%20red%20line%20art%20black%20background%20vintage%20literary%20style&image_size=portrait_4_3' },
+  { title: '小王子', author: '圣埃克苏佩里', cover: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=book%20cover%20of%20The%20Little%20Prince%20by%20Saint%20Exupery%20Chinese%20edition%20blue%20background%20little%20prince%20standing%20on%20planet%20yellow%20stars%20illustration%20style&image_size=portrait_4_3' },
+  { title: '人类简史', author: '尤瓦尔·赫拉利', cover: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=book%20cover%20of%20Sapiens%20A%20Brief%20History%20of%20Humankind%20by%20Yuval%20Noah%20Harari%20Chinese%20edition%20minimalist%20design%20human%20silhouette%20evolution%20cream%20background&image_size=portrait_4_3' },
+  { title: '活着', author: '余华', cover: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=book%20cover%20of%20To%20Live%20by%20Yu%20Hua%20Chinese%20edition%20elegant%20Chinese%20calligraphy%20landscape%20ink%20painting%20style%20blue%20and%20white&image_size=portrait_4_3' },
+  { title: '三体', author: '刘慈欣', cover: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=book%20cover%20of%20The%20Three%20Body%20Problem%20by%20Liu%20Cixin%20Chinese%20edition%20science%20fiction%20purple%20pink%20space%20pyramid%20futuristic%20design&image_size=portrait_4_3' },
+  { title: '设计心理学', author: '唐纳德·诺曼', cover: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=book%20cover%20of%20The%20Design%20of%20Everyday%20Things%20by%20Donald%20Norman%20Chinese%20edition%20modern%20minimalist%20red%20blue%20typography%20design&image_size=portrait_4_3' },
+  { title: '思考，快与慢', author: '丹尼尔·卡尼曼', cover: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=book%20cover%20of%20Thinking%20Fast%20and%20Slow%20by%20Daniel%20Kahneman%20Chinese%20edition%20yellow%20pencil%20white%20background%20clean%20minimalist%20design&image_size=portrait_4_3' },
+  { title: '月亮与六便士', author: '毛姆', cover: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=book%20cover%20of%20The%20Moon%20and%20Sixpence%20by%20Somerset%20Maugham%20Chinese%20edition%20blue%20sky%20yellow%20moon%20ocean%20literary%20art%20style&image_size=portrait_4_3' },
 ];
 
 const marqueeBooks2 = [
-  { title: '红楼梦', author: '曹雪芹', cover: 'https://books.google.com/books/content?id=E9YRAQAAMAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api' },
-  { title: '原则', author: '瑞·达利欧', cover: 'https://books.google.com/books/content?id=6R8PDwAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api' },
-  { title: '被讨厌的勇气', author: '岸见一郎', cover: 'https://books.google.com/books/content?id=6rIRDwAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api' },
-  { title: '枪炮、病菌与钢铁', author: '贾雷德·戴蒙德', cover: 'https://books.google.com/books/content?id=L_7WDwAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api' },
-  { title: '瓦尔登湖', author: '梭罗', cover: 'https://books.google.com/books/content?id=84nVDwAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api' },
-  { title: '刻意练习', author: '安德斯·艾利克森', cover: 'https://books.google.com/books/content?id=w4YpDwAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api' },
-  { title: '追风筝的人', author: '卡勒德·胡赛尼', cover: 'https://books.google.com/books/content?id=M7QDqwAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api' },
-  { title: '黑客与画家', author: '保罗·格雷厄姆', cover: 'https://books.google.com/books/content?id=1uN0AwAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api' },
+  { title: '红楼梦', author: '曹雪芹', cover: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=book%20cover%20of%20Dream%20of%20the%20Red%20Chamber%20by%20Cao%20Xueqin%20Chinese%20classic%20red%20traditional%20Chinese%20painting%20style%20elegant&image_size=portrait_4_3' },
+  { title: '原则', author: '瑞·达利欧', cover: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=book%20cover%20of%20Principles%20by%20Ray%20Dalio%20Chinese%20edition%20black%20background%20bold%20red%20and%20white%20typography%20modern%20corporate%20style&image_size=portrait_4_3' },
+  { title: '被讨厌的勇气', author: '岸见一郎', cover: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=book%20cover%20of%20The%20Courage%20to%20Be%20Disliked%20by%20Kishimi%20Chinese%20edition%20blue%20watercolor%20background%20inspirational%20philosophy%20book&image_size=portrait_4_3' },
+  { title: '枪炮、病菌与钢铁', author: '贾雷德·戴蒙德', cover: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=book%20cover%20of%20Guns%20Germs%20and%20Steel%20by%20Jared%20Diamond%20Chinese%20edition%20vintage%20historical%20art%20painting%20style%20civilization%20history&image_size=portrait_4_3' },
+  { title: '瓦尔登湖', author: '梭罗', cover: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=book%20cover%20of%20Walden%20by%20Henry%20David%20Thoreau%20Chinese%20edition%20peaceful%20lake%20forest%20nature%20landscape%20painting%20serene%20style&image_size=portrait_4_3' },
+  { title: '刻意练习', author: '安德斯·艾利克森', cover: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=book%20cover%20of%20Peak%20by%20Anders%20Ericsson%20Chinese%20edition%20kraft%20paper%20background%20hand%20drawn%20sketches%20education%20self%20improvement&image_size=portrait_4_3' },
+  { title: '追风筝的人', author: '卡勒德·胡赛尼', cover: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=book%20cover%20of%20The%20Kite%20Runner%20by%20Khaled%20Hosseini%20Chinese%20edition%20sunset%20sky%20orange%20red%20kite%20flying%20emotional%20literary%20style&image_size=portrait_4_3' },
+  { title: '黑客与画家', author: '保罗·格雷厄姆', cover: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=book%20cover%20of%20Hackers%20and%20Painters%20by%20Paul%20Graham%20Chinese%20edition%20Babel%20tower%20painting%20tech%20startup%20orange%20blue%20color%20scheme&image_size=portrait_4_3' },
 ];
 
 export default function HomePage() {
@@ -53,7 +53,7 @@ export default function HomePage() {
   }, []);
 
   useEffect(() => {
-    const elements = document.querySelectorAll('.reveal');
+    const revealElements = document.querySelectorAll('.reveal');
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -65,89 +65,40 @@ export default function HomePage() {
       { threshold: 0.1 }
     );
 
-    elements.forEach((el) => observer.observe(el));
+    revealElements.forEach((el) => observer.observe(el));
     return () => observer.disconnect();
   }, []);
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     if (!localInput.trim()) return;
-    
-    dispatch({ type: 'SET_LOADING', payload: true });
-    dispatch({ type: 'SET_ERROR', payload: null });
     dispatch({ type: 'SET_RAW_INPUT', payload: localInput.trim() });
-
-    try {
-      const response = await fetch('/api/structure', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ rawInput: localInput.trim() }),
-      });
-
-      const data = await response.json();
-
-      if (!data.success) {
-        dispatch({ type: 'SET_ERROR', payload: data.error?.message || '请求失败' });
-        return;
-      }
-
-      dispatch({ type: 'SET_STRUCTURED_IDEA', payload: data.data });
-      dispatch({ type: 'SET_EDITED_IDEA', payload: data.data });
-      router.push('/structured');
-    } catch {
-      dispatch({ type: 'SET_ERROR', payload: '网络错误，请稍后重试' });
-    } finally {
-      dispatch({ type: 'SET_LOADING', payload: false });
-    }
+    router.push('/structured');
   };
 
   return (
-    <div className="min-h-screen bg-bg">
-      <a href="#main-content" className="fixed top-4 left-4 z-200 px-4 py-2 bg-accent text-bg font-medium text-sm rounded-lg opacity-0 hover:opacity-100 transition-opacity focus:opacity-100">跳过导航，直接到内容</a>
-      <nav className="fixed top-0 left-0 right-0 z-100 px-4 sm:px-8 py-4 flex items-center justify-between bg-[rgba(10,10,12,0.7)] backdrop-blur-custom border-b border-border-subtle transition-all duration-300">
-        <div className="font-display text-xl font-bold text-text tracking-[0.02em]">
-          书<span className="text-accent">谱</span>
-        </div>
-        <ul className="hidden md:flex items-center gap-8 list-none">
-          <li><a href="#features" className="text-sm text-text-secondary hover:text-text transition-colors">功能</a></li>
-          <li><a href="#how" className="text-sm text-text-secondary hover:text-text transition-colors">使用方法</a></li>
-          <li>
-            <a 
-              href="#hero" 
-              className="px-5 py-2 bg-accent text-bg font-semibold text-sm rounded-full hover:bg-accent-hover hover:-translate-y-0.5 transition-all duration-200"
-            >
-              开始探索
-            </a>
-          </li>
-        </ul>
-      </nav>
+    <div className="min-h-screen bg-bg text-text">
+      <main>
+        <section className="hero relative min-h-screen flex flex-col items-center justify-center px-4 py-12 overflow-hidden">
+          <div className="absolute inset-0 overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-b from-[#0A0A0C] via-[#0A0A0C] to-[#080C10]" />
+            <div 
+              className="absolute inset-0 opacity-30"
+              style={{
+                backgroundImage: `url('/assets/hero-bg.jpg')`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                filter: 'blur(4px)',
+              }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0C] via-transparent to-[#0A0A0C]" />
+          </div>
 
-      <main id="main-content">
-        <section id="hero" className="hero relative min-h-screen flex flex-col items-center justify-center px-4 sm:px-8 pt-20 pb-16 overflow-hidden">
-          <div className="absolute inset-0 bg-[url('/assets/hero-bg.jpg')] center/cover opacity-[0.15] saturate-[0.6] pointer-events-none" />
-          <div className="absolute inset-0 bg-gradient-to-b from-bg via-transparent to-bg pointer-events-none" />
-          
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_40%,rgba(212,165,116,0.06)_0%,transparent_70%),radial-gradient(ellipse_40%_60%_at_20%_80%,rgba(139,110,78,0.04)_0%,transparent_60%),radial-gradient(ellipse_50%_40%_at_80%_20%,rgba(201,149,106,0.03)_0%,transparent_60%)] pointer-events-none" />
-
-          <div className="relative z-2 text-center max-w-4xl">
-            <h1 
-              className="font-display text-[clamp(2.5rem,6vw,4.5rem)] font-bold text-text leading-[1.2] tracking-[-0.02em] mb-6 opacity-0 translate-y-7"
-              style={{ animation: 'heroFadeUp 1s cubic-bezier(0.16,1,0.3,1) 0.4s forwards' }}
-            >
-              伟大的作品都是从<br />一个灵感开始
+          <div className="relative z-10 text-center">
+            <h1 className="font-display text-[clamp(2.5rem,8vw,4.5rem)] font-bold text-text tracking-[-0.02em] mb-4 opacity-0 translate-y-5" style={{ animation: 'heroFadeUp 0.8s cubic-bezier(0.16,1,0.3,1) 0.2s forwards' }}>
+              书谱
             </h1>
             
-            <p 
-              className="text-[clamp(1rem,2vw,1.25rem)] text-text-secondary max-w-2xl mx-auto mb-8 leading-[1.7] opacity-0 translate-y-5"
-              style={{ animation: 'heroFadeUp 0.8s cubic-bezier(0.16,1,0.3,1) 0.6s forwards' }}
-            >
-              书谱帮你把模糊的写书想法变成一张有方向感的地图。<br />
-              不再凭空摸索，几分钟看清方向。
-            </p>
-
-            <div 
-              className="flex flex-col gap-4 max-w-md mx-auto opacity-0 translate-y-5"
-              style={{ animation: 'heroFadeUp 0.8s cubic-bezier(0.16,1,0.3,1) 0.8s forwards' }}
-            >
+            <div className="flex flex-col gap-4 max-w-md mx-auto opacity-0 translate-y-5" style={{ animation: 'heroFadeUp 0.8s cubic-bezier(0.16,1,0.3,1) 0.8s forwards' }}>
               <textarea
                 name="book-idea"
                 className="w-full px-6 py-4 bg-surface border border-border rounded-xl text-text font-body text-base resize-none outline-none focus:border-accent focus:shadow-[0_0_0_3px_rgba(212,165,116,0.15)] transition-all duration-200"
@@ -277,129 +228,48 @@ export default function HomePage() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="feature-card p-8 rounded-xl bg-surface border border-border-subtle hover:bg-surface-hover hover:border-border transition-all duration-250">
-                <div className="w-12 h-12 rounded-lg bg-accent-dim flex items-center justify-center mb-6 text-accent">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/>
-                    <path d="M9 18h6"/>
-                    <path d="M10 22h4"/>
+                <div className="w-12 h-12 rounded-lg bg-accent/10 flex items-center justify-center mb-6">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-6 h-6 text-accent">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
                   </svg>
                 </div>
-                <h3 className="text-lg font-semibold text-text mb-3">结构化你的想法</h3>
-                <p className="text-base text-text-secondary leading-[1.7]">
-                  AI 帮你把模糊灵感拆解为清晰维度——主题、体裁、读者画像、核心观点，让想法变成可以落地的框架。
+                <h3 className="font-display text-xl font-semibold text-text mb-3">梳理想法</h3>
+                <p className="text-text-secondary leading-relaxed">
+                  输入一句话描述你的书，AI 帮你提炼核心主题、受众定位和写作方向
                 </p>
               </div>
 
               <div className="feature-card p-8 rounded-xl bg-surface border border-border-subtle hover:bg-surface-hover hover:border-border transition-all duration-250">
-                <div className="w-12 h-12 rounded-lg bg-accent-dim flex items-center justify-center mb-6 text-accent">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="11" cy="11" r="8"/>
-                    <path d="m21 21-4.3-4.3"/>
+                <div className="w-12 h-12 rounded-lg bg-accent/10 flex items-center justify-center mb-6">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-6 h-6 text-accent">
+                    <path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
                   </svg>
                 </div>
-                <h3 className="text-lg font-semibold text-text mb-3">找到对标书籍</h3>
-                <p className="text-base text-text-secondary leading-[1.7]">
-                  发现与你想法相似的优秀作品，站在巨人的肩膀上找到自己的独特视角。不是排行榜，是一张路径图。
+                <h3 className="font-display text-xl font-semibold text-text mb-3">确认理解</h3>
+                <p className="text-text-secondary leading-relaxed">
+                  检查 AI 的分析结果，随时调整标签和描述，确保理解准确
                 </p>
               </div>
 
               <div className="feature-card p-8 rounded-xl bg-surface border border-border-subtle hover:bg-surface-hover hover:border-border transition-all duration-250">
-                <div className="w-12 h-12 rounded-lg bg-accent-dim flex items-center justify-center mb-6 text-accent">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <polygon points="3 11 22 2 13 21 11 13 3 11"/>
+                <div className="w-12 h-12 rounded-lg bg-accent/10 flex items-center justify-center mb-6">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-6 h-6 text-accent">
+                    <path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                    <path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
                   </svg>
                 </div>
-                <h3 className="text-lg font-semibold text-text mb-3">看到方向</h3>
-                <p className="text-base text-text-secondary leading-[1.7]">
-                  空间化地图展示你可以走的每条路——换个体裁、换个主题、换个人群深度。每一步都有方向感。
+                <h3 className="font-display text-xl font-semibold text-text mb-3">发现方向</h3>
+                <p className="text-text-secondary leading-relaxed">
+                  在参考地图上发现相似的经典书籍，找到你的定位和写作灵感
                 </p>
               </div>
             </div>
-          </div>
-        </section>
-
-        <section id="how" className="how-it-works px-4 sm:px-8 py-[clamp(4rem,10vw,8rem)] bg-bg-elevated border-y border-border-subtle">
-          <div className="max-w-5xl mx-auto">
-            <div className="how-header text-center mb-16">
-              <h2 className="font-display text-[clamp(1.75rem,4vw,2.75rem)] font-bold text-text tracking-[-0.02em] mb-4">
-                几分钟，看清方向
-              </h2>
-              <p className="text-lg text-text-secondary max-w-lg mx-auto leading-[1.7]">
-                从模糊到清晰的四步旅程
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-              <div className="how-step text-center">
-                <div className="font-display text-5xl font-bold text-accent-dim leading-none mb-4" style={{ WebkitTextStroke: '1.5px var(--color-accent)', color: 'transparent' }}>
-                  01
-                </div>
-                <h3 className="text-lg font-semibold text-text mb-3">说出你的想法</h3>
-                <p className="text-sm text-text-secondary leading-[1.7] max-w-[16rem] mx-auto">
-                  用一两句话描述你想写的书，或语音说出你的灵感。无需专业术语，越模糊越好。
-                </p>
-              </div>
-
-              <div className="how-step text-center">
-                <div className="font-display text-5xl font-bold text-accent-dim leading-none mb-4" style={{ WebkitTextStroke: '1.5px var(--color-accent)', color: 'transparent' }}>
-                  02
-                </div>
-                <h3 className="text-lg font-semibold text-text mb-3">AI 帮你拆解</h3>
-                <p className="text-sm text-text-secondary leading-[1.7] max-w-[16rem] mx-auto">
-                  AI 将你的想法拆解为主题、体裁、读者画像、核心观点，你可以确认或调整。
-                </p>
-              </div>
-
-              <div className="how-step text-center">
-                <div className="font-display text-5xl font-bold text-accent-dim leading-none mb-4" style={{ WebkitTextStroke: '1.5px var(--color-accent)', color: 'transparent' }}>
-                  03
-                </div>
-                <h3 className="text-lg font-semibold text-text mb-3">拿到对标地图</h3>
-                <p className="text-sm text-text-secondary leading-[1.7] max-w-[16rem] mx-auto">
-                  看到与你想法相关的书籍分布，像星座图一样展示每条可能的写作路径。
-                </p>
-              </div>
-
-              <div className="how-step text-center">
-                <div className="font-display text-5xl font-bold text-accent-dim leading-none mb-4" style={{ WebkitTextStroke: '1.5px var(--color-accent)', color: 'transparent' }}>
-                  04
-                </div>
-                <h3 className="text-lg font-semibold text-text mb-3">开始动笔</h3>
-                <p className="text-sm text-text-secondary leading-[1.7] max-w-[16rem] mx-auto">
-                  带着清晰的方向感开始你的写作之旅，不再迷茫。
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section id="cta" className="cta-section px-4 sm:px-8 py-[clamp(4rem,10vw,8rem)] text-center relative overflow-hidden">
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_60%_at_50%_50%,rgba(212,165,116,0.1)_0%,transparent_70%)] pointer-events-none" />
-          
-          <div className="relative z-1 max-w-3xl mx-auto">
-            <h2 className="font-display text-[clamp(1.75rem,4vw,2.5rem)] font-bold text-text tracking-[-0.02em] mb-4">
-              开始你的写书之旅
-            </h2>
-            <p className="text-lg text-text-secondary mb-8 leading-[1.7]">
-              无论你现在有多么模糊的想法，书谱都能帮你找到方向。
-            </p>
-            
-            <a 
-              href="#hero"
-              className="inline-flex items-center gap-2 px-10 py-5 bg-accent text-bg font-semibold rounded-full hover:bg-accent-hover hover:-translate-y-0.5 hover:shadow-[0_8px_32px_rgba(212,165,116,0.3)] active:translate-y-0 active:scale-[0.98] transition-all duration-200"
-            >
-              立即探索
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M5 12h14"/>
-                <path d="m12 5 7 7-7 7"/>
-              </svg>
-            </a>
           </div>
         </section>
 
         <footer className="footer px-4 py-8 border-t border-border-subtle text-center">
           <p className="text-sm text-text-muted">
-            <span className="font-display font-semibold text-text-secondary">书谱</span> — 为每一个想写书的人
+            <span className="font-display font-semibold text-text-secondary">书谱</span> — 让你写书心中有谱
           </p>
           <p className="text-xs text-text-muted mt-3">
             你的想法仅用于本次分析，不会被保存或用于训练

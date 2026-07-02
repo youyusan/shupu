@@ -27,11 +27,11 @@ export function StepIndicator({ currentStep }: StepIndicatorProps) {
               isActive ? 'ring-2 ring-accent ring-offset-2 ring-offset-bg' : ''
             }`}>
               {isActive ? (
-                <span className="bg-accent text-bg">{index + 1}</span>
+                <span className="bg-accent text-bg w-full h-full flex items-center justify-center rounded-full">{index + 1}</span>
               ) : isPast ? (
-                <span className="bg-accent/20 text-accent">{index + 1}</span>
+                <span className="bg-accent/20 text-accent w-full h-full flex items-center justify-center rounded-full">{index + 1}</span>
               ) : (
-                <span className="bg-surface text-text-muted border border-border-subtle">
+                <span className="bg-surface text-text-muted border border-border-subtle w-full h-full flex items-center justify-center rounded-full">
                   {index + 1}
                 </span>
               )}

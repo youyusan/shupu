@@ -121,6 +121,21 @@ body {
   color: var(--color-bg);
 }
 
+/* 自定义滚动条 - 适配深色主题 */
+textarea::-webkit-scrollbar {
+  width: 6px;
+}
+textarea::-webkit-scrollbar-track {
+  background: transparent;
+}
+textarea::-webkit-scrollbar-thumb {
+  background: rgba(107, 101, 96, 0.4);
+  border-radius: 3px;
+}
+textarea::-webkit-scrollbar-thumb:hover {
+  background: rgba(107, 101, 96, 0.6);
+}
+
 @keyframes heroFadeUp {
   to {
     opacity: 1;
