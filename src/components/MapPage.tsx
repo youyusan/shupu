@@ -252,17 +252,7 @@ export function MapPage() {
 
       <div className="content-container">
         <div className="desktop-layout">
-          <svg className="lines-svg" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
-            <path className="cline cline--top" d="M400 300 Q 400 200 400 80" />
-            <path className="cline cline--right" d="M400 300 Q 550 300 700 300" />
-            <path className="cline cline--left" d="M400 300 Q 250 300 100 300" />
-            <path className="cline cline--bottom" d="M400 300 Q 400 420 400 520" />
-
-            <path className="cgLOW cgLOW--top" d="M400 300 Q 400 200 400 80" />
-            <path className="cgLOW cgLOW--right" d="M400 300 Q 550 300 700 300" />
-            <path className="cgLOW cgLOW--left" d="M400 300 Q 250 300 100 300" />
-            <path className="cgLOW cgLOW--bottom" d="M400 300 Q 400 420 400 520" />
-          </svg>
+          
 
           <div className="map-grid">
             <div className="grid-top">
@@ -478,47 +468,6 @@ export function MapPage() {
 
         .mobile-layout {
           display: none;
-        }
-
-        .lines-svg {
-          position: absolute;
-          inset: 0;
-          width: 100%;
-          height: 100%;
-          z-index: 1;
-          pointer-events: none;
-        }
-
-        .cline {
-          fill: none;
-          stroke: rgba(78, 205, 196, 0.2);
-          stroke-width: 1;
-          stroke-dasharray: 600;
-          stroke-dashoffset: 600;
-          animation: drawLine 2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-        .cline--top { animation-delay: 0.3s; }
-        .cline--right { animation-delay: 0.5s; }
-        .cline--left { animation-delay: 0.7s; }
-        .cline--bottom { animation-delay: 0.9s; }
-
-        .cgLOW {
-          fill: none;
-          stroke: #4ECDC4;
-          stroke-width: 6;
-          stroke-dasharray: 600;
-          stroke-dashoffset: 600;
-          opacity: 0.05;
-          filter: blur(4px);
-          animation: drawLine 2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-        .cgLOW--top { animation-delay: 0.3s; }
-        .cgLOW--right { animation-delay: 0.5s; }
-        .cgLOW--left { animation-delay: 0.7s; }
-        .cgLOW--bottom { animation-delay: 0.9s; }
-
-        @keyframes drawLine {
-          to { stroke-dashoffset: 0; }
         }
 
         .map-grid {
@@ -1103,7 +1052,6 @@ export function MapPage() {
             animation-iteration-count: 1 !important;
             transition-duration: 0.01ms !important;
           }
-          .cline, .cgLOW { animation: none; stroke-dashoffset: 0; }
           .book-wrapper { opacity: 1; animation: none; }
           .map-hint { opacity: 0.5; animation: none; }
           .modal-content { transform: none; opacity: 1; }
