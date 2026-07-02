@@ -6,25 +6,25 @@ import { useRouter } from 'next/navigation';
 import { useAppState } from '@/lib/state/app-context';
 
 const marqueeBooks = [
-  { title: '百年孤独', author: '加西亚·马尔克斯', cover: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=book%20cover%20of%20One%20Hundred%20Years%20of%20Solitude%20by%20Gabriel%20Garcia%20Marquez%20Chinese%20edition%20red%20line%20art%20black%20background%20vintage%20literary%20style&image_size=portrait_4_3' },
-  { title: '小王子', author: '圣埃克苏佩里', cover: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=book%20cover%20of%20The%20Little%20Prince%20by%20Saint%20Exupery%20Chinese%20edition%20blue%20background%20little%20prince%20standing%20on%20planet%20yellow%20stars%20illustration%20style&image_size=portrait_4_3' },
-  { title: '人类简史', author: '尤瓦尔·赫拉利', cover: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=book%20cover%20of%20Sapiens%20A%20Brief%20History%20of%20Humankind%20by%20Yuval%20Noah%20Harari%20Chinese%20edition%20minimalist%20design%20human%20silhouette%20evolution%20cream%20background&image_size=portrait_4_3' },
-  { title: '活着', author: '余华', cover: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=book%20cover%20of%20To%20Live%20by%20Yu%20Hua%20Chinese%20edition%20elegant%20Chinese%20calligraphy%20landscape%20ink%20painting%20style%20blue%20and%20white&image_size=portrait_4_3' },
-  { title: '三体', author: '刘慈欣', cover: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=book%20cover%20of%20The%20Three%20Body%20Problem%20by%20Liu%20Cixin%20Chinese%20edition%20science%20fiction%20purple%20pink%20space%20pyramid%20futuristic%20design&image_size=portrait_4_3' },
-  { title: '设计心理学', author: '唐纳德·诺曼', cover: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=book%20cover%20of%20The%20Design%20of%20Everyday%20Things%20by%20Donald%20Norman%20Chinese%20edition%20modern%20minimalist%20red%20blue%20typography%20design&image_size=portrait_4_3' },
-  { title: '思考，快与慢', author: '丹尼尔·卡尼曼', cover: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=book%20cover%20of%20Thinking%20Fast%20and%20Slow%20by%20Daniel%20Kahneman%20Chinese%20edition%20yellow%20pencil%20white%20background%20clean%20minimalist%20design&image_size=portrait_4_3' },
-  { title: '月亮与六便士', author: '毛姆', cover: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=book%20cover%20of%20The%20Moon%20and%20Sixpence%20by%20Somerset%20Maugham%20Chinese%20edition%20blue%20sky%20yellow%20moon%20ocean%20literary%20art%20style&image_size=portrait_4_3' },
+  { title: '百年孤独', author: '加西亚·马尔克斯', cover: '/covers/01.jpg' },
+  { title: '小王子', author: '圣埃克苏佩里', cover: '/covers/02.jpg' },
+  { title: '人类简史', author: '尤瓦尔·赫拉利', cover: '/covers/03.jpg' },
+  { title: '活着', author: '余华', cover: '/covers/04.jpg' },
+  { title: '三体', author: '刘慈欣', cover: '/covers/05.jpg' },
+  { title: '设计心理学', author: '唐纳德·诺曼', cover: '/covers/06.jpg' },
+  { title: '思考，快与慢', author: '丹尼尔·卡尼曼', cover: '/covers/07.jpg' },
+  { title: '月亮与六便士', author: '毛姆', cover: '/covers/08.jpg' },
 ];
 
 const marqueeBooks2 = [
-  { title: '红楼梦', author: '曹雪芹', cover: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=book%20cover%20of%20Dream%20of%20the%20Red%20Chamber%20by%20Cao%20Xueqin%20Chinese%20classic%20red%20traditional%20Chinese%20painting%20style%20elegant&image_size=portrait_4_3' },
-  { title: '原则', author: '瑞·达利欧', cover: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=book%20cover%20of%20Principles%20by%20Ray%20Dalio%20Chinese%20edition%20black%20background%20bold%20red%20and%20white%20typography%20modern%20corporate%20style&image_size=portrait_4_3' },
-  { title: '被讨厌的勇气', author: '岸见一郎', cover: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=book%20cover%20of%20The%20Courage%20to%20Be%20Disliked%20by%20Kishimi%20Chinese%20edition%20blue%20watercolor%20background%20inspirational%20philosophy%20book&image_size=portrait_4_3' },
-  { title: '枪炮、病菌与钢铁', author: '贾雷德·戴蒙德', cover: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=book%20cover%20of%20Guns%20Germs%20and%20Steel%20by%20Jared%20Diamond%20Chinese%20edition%20vintage%20historical%20art%20painting%20style%20civilization%20history&image_size=portrait_4_3' },
-  { title: '瓦尔登湖', author: '梭罗', cover: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=book%20cover%20of%20Walden%20by%20Henry%20David%20Thoreau%20Chinese%20edition%20peaceful%20lake%20forest%20nature%20landscape%20painting%20serene%20style&image_size=portrait_4_3' },
-  { title: '刻意练习', author: '安德斯·艾利克森', cover: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=book%20cover%20of%20Peak%20by%20Anders%20Ericsson%20Chinese%20edition%20kraft%20paper%20background%20hand%20drawn%20sketches%20education%20self%20improvement&image_size=portrait_4_3' },
-  { title: '追风筝的人', author: '卡勒德·胡赛尼', cover: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=book%20cover%20of%20The%20Kite%20Runner%20by%20Khaled%20Hosseini%20Chinese%20edition%20sunset%20sky%20orange%20red%20kite%20flying%20emotional%20literary%20style&image_size=portrait_4_3' },
-  { title: '黑客与画家', author: '保罗·格雷厄姆', cover: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=book%20cover%20of%20Hackers%20and%20Painters%20by%20Paul%20Graham%20Chinese%20edition%20Babel%20tower%20painting%20tech%20startup%20orange%20blue%20color%20scheme&image_size=portrait_4_3' },
+  { title: '红楼梦', author: '曹雪芹', cover: '/covers/09.jpg' },
+  { title: '原则', author: '瑞·达利欧', cover: '/covers/10.jpg' },
+  { title: '被讨厌的勇气', author: '岸见一郎', cover: '/covers/11.jpg' },
+  { title: '枪炮、病菌与钢铁', author: '贾雷德·戴蒙德', cover: '/covers/12.jpg' },
+  { title: '瓦尔登湖', author: '梭罗', cover: '/covers/13.jpg' },
+  { title: '刻意练习', author: '安德斯·艾利克森', cover: '/covers/14.jpg' },
+  { title: '追风筝的人', author: '卡勒德·胡赛尼', cover: '/covers/15.jpg' },
+  { title: '黑客与画家', author: '保罗·格雷厄姆', cover: '/covers/16.jpg' },
 ];
 
 export default function HomePage() {
