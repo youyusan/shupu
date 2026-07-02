@@ -143,7 +143,7 @@ export function MapPage() {
         </ul>
       </nav>
 
-      <div className="constellation">
+      <div className="constellation desktop-only">
         <svg className="lines-svg" viewBox="0 0 1000 800" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
           <path className="cgLOW cgLOW--d1" d="M 500 390 Q 350 300 170 180" />
           <path className="cgLOW cgLOW--d2" d="M 500 390 Q 660 280 820 150" />
@@ -176,7 +176,7 @@ export function MapPage() {
         )}
       </div>
 
-      <div className="mobile-stack">
+      <div className="mobile-stack mobile-only">
         {upBooks.length > 0 && (
           <>
             <div className="mobile-label">{directionLabels['reader-up'].label}</div>
@@ -281,6 +281,14 @@ export function MapPage() {
           align-items: center;
           justify-content: center;
           padding: 5rem 3rem 4rem;
+        }
+
+        .desktop-only {
+          display: flex;
+        }
+
+        .mobile-only {
+          display: none;
         }
 
         .lines-svg {
@@ -570,8 +578,10 @@ export function MapPage() {
         }
 
         @media (max-width: 768px) {
-          .constellation { display: none; }
-          .mobile-stack { display: flex; }
+          .constellation { display: none !important; }
+          .mobile-stack { display: flex !important; }
+          .desktop-only { display: none !important; }
+          .mobile-only { display: flex !important; }
           body { overflow-y: auto; overflow-x: hidden; }
           .map-page { height: auto; min-height: 100vh; }
           .map-hint {
