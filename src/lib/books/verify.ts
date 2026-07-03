@@ -58,11 +58,12 @@ async function verifyByOpenLibrary(
 
 async function verifyByGoogleBooks(
   title: string,
-  author?: string
+  author?: string,
+  isbn?: string
 ): Promise<GoogleBookVolumeInfo | null> {
   try {
     const { searchBook } = await import('./google-books');
-    return await searchBook(title, author);
+    return await searchBook(title, author, isbn);
   } catch {
     return null;
   }
@@ -76,10 +77,10 @@ async function verifyByGoogleBooks(
 export async function verifyBookExists(
   title: string,
   author?: string,
-  _isbn?: string
+  isbn?: string
 ): Promise<{ exists: boolean; source: 'google-books' | 'open-library' | 'none'; volumeInfo?: GoogleBookVolumeInfo }> {
-  // 1. Google Books API
-  const gbResult = await verifyByGoogleBooks(title, author);
+  // 1. Google Books API（优先使用 ISBN 精确搜索）
+  const gbResult = await verifyByGoogleBooks(title, author, isbn);
   if (gbResult) {
     // 做简单的标题匹配确认
     if (gbResult.title && fuzzyMatch(gbResult.title, title)) {
