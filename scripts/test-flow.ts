@@ -22,12 +22,12 @@ async function main() {
 
   let structuredIdea: any;
   try {
-    structuredIdea = parseJsonFromLlm(structureResponse);
+    structuredIdea = parseJsonFromLlm(structureResponse.content);
     console.log('结构化结果:');
     console.log(JSON.stringify(structuredIdea, null, 2));
   } catch (e) {
     console.error('结构化解析失败:', e);
-    console.log('原始响应:', structureResponse);
+    console.log('原始响应:', structureResponse.content);
     return;
   }
 
@@ -44,12 +44,12 @@ async function main() {
 
   let recommendations: any[];
   try {
-    recommendations = parseJsonFromLlm(recommendResponse);
+    recommendations = parseJsonFromLlm(recommendResponse.content) as any[];
     console.log('AI 原始推荐:', recommendations.length, '本');
     console.log(JSON.stringify(recommendations, null, 2));
   } catch (e) {
     console.error('推荐解析失败:', e);
-    console.log('原始响应:', recommendResponse);
+    console.log('原始响应:', recommendResponse.content);
     return;
   }
 

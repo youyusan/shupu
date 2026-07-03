@@ -1,17 +1,48 @@
 import { fetchWithTimeout } from './client';
 
 export interface ChatMessage {
-  role: 'system' | 'user' | 'assistant';
+  role: 'system' | 'user' | 'assistant' | 'tool';
+  content: string;
+  tool_call_id?: string;
+}
+
+export interface ToolDefinition {
+  type: 'function';
+  function: {
+    name: string;
+    description: string;
+    parameters: Record<string, unknown>;
+  };
+}
+
+export interface ToolCall {
+  id: string;
+  type: 'function';
+  function: {
+    name: string;
+    arguments: string;
+  };
+}
+
+export interface ToolResultMessage {
+  role: 'tool';
+  tool_call_id: string;
   content: string;
 }
 
 export interface ChatOptions {
   temperature?: number;
   responseFormat?: 'json' | 'text';
+  tools?: ToolDefinition[];
+}
+
+export interface ChatResponse {
+  content: string;
+  toolCalls?: ToolCall[];
 }
 
 export interface ModelProvider {
-  chat(messages: ChatMessage[], options?: ChatOptions): Promise<string>;
+  chat(messages: ChatMessage[], options?: ChatOptions): Promise<ChatResponse>;
 }
 
 export class DeepSeekProvider implements ModelProvider {
@@ -24,16 +55,24 @@ export class DeepSeekProvider implements ModelProvider {
     }
   }
   
-  async chat(messages: ChatMessage[], options?: ChatOptions): Promise<string> {
+  async chat(messages: ChatMessage[], options?: ChatOptions): Promise<ChatResponse> {
     const temperature = options?.temperature ?? 0.3;
     const responseFormat = options?.responseFormat ?? 'text';
     
-    const requestBody = {
+    const requestBody: Record<string, unknown> = {
       model: 'deepseek-chat',
       messages,
       temperature,
-      ...(responseFormat === 'json' ? { response_format: { type: 'json_object' } } : {}),
     };
+
+    if (responseFormat === 'json') {
+      requestBody.response_format = { type: 'json_object' };
+    }
+
+    if (options?.tools && options.tools.length > 0) {
+      requestBody.tools = options.tools;
+      requestBody.tool_choice = 'auto';
+    }
     
     const maxRetries = 3;
     const retryDelay = 1000;
@@ -46,7 +85,7 @@ export class DeepSeekProvider implements ModelProvider {
           'Authorization': `Bearer ${this.apiKey}`,
         },
         body: JSON.stringify(requestBody),
-        timeout: 30000,
+        timeout: 60000,
       });
       
       if (!response.ok) {
@@ -61,7 +100,19 @@ export class DeepSeekProvider implements ModelProvider {
       }
       
       const data = await response.json();
-      return data.choices?.[0]?.message?.content || '';
+      const message = data.choices?.[0]?.message;
+      
+      return {
+        content: message?.content || '',
+        toolCalls: message?.tool_calls?.map((tc: Record<string, unknown>) => ({
+          id: tc.id as string,
+          type: 'function' as const,
+          function: {
+            name: (tc.function as Record<string, string>).name,
+            arguments: (tc.function as Record<string, string>).arguments,
+          },
+        })),
+      };
     }
     
     throw new Error('DeepSeek API 服务繁忙，请稍后重试');
@@ -69,7 +120,7 @@ export class DeepSeekProvider implements ModelProvider {
 }
 
 export class OpenAIProvider implements ModelProvider {
-  async chat(): Promise<string> {
+  async chat(): Promise<ChatResponse> {
     throw new Error('OpenAI 模型尚未实现，请配置 DEEPSEEK_API_KEY');
   }
 }

@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getProvider } from '@/lib/ai/provider';
+import type { ChatMessage, ToolCall } from '@/lib/ai/provider';
 import { parseJsonFromLlm } from '@/lib/ai/json-parser';
 import { recommendRequestSchema, recommendationsSchema } from '@/lib/ai/validator';
 import { recommendPrompt } from '@/lib/prompts';
 import { rateLimiter } from '@/lib/rate-limiter';
-import { enrichBook } from '@/lib/books/enrich';
+import { searchBookTool, executeSearchBook } from '@/lib/books/search-book-tool';
 import type { ApiResponse, BookRecommendation, ErrorCode } from '@/types';
 
 function getClientIp(request: NextRequest): string {
@@ -75,23 +76,57 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     }
     
     const { structuredIdea } = validation.data;
-    
     const prompt = recommendPrompt(structuredIdea);
     const provider = getProvider();
-    
-    const aiResponse = await provider.chat(
-      [{ role: 'system', content: prompt }],
+
+    // 第1轮：发送 prompt + 搜索工具定义，让 DeepSeek 先搜索验证
+    const messages: ChatMessage[] = [
+      { role: 'system', content: prompt },
+    ];
+
+    const round1 = await provider.chat(messages, {
+      tools: [searchBookTool],
+      temperature: 0.3,
+    });
+
+    // 如果模型没有调用工具，说明它直接返回了结果
+    if (!round1.toolCalls || round1.toolCalls.length === 0) {
+      const parsed = parseJsonFromLlm(round1.content);
+      const result = recommendationsSchema.parse(parsed);
+      return createResponse<BookRecommendation[]>(result, rateLimitResult);
+    }
+
+    // 执行所有搜索工具调用
+    const assistantMessage: ChatMessage = {
+      role: 'assistant',
+      content: round1.content,
+    };
+
+    const toolResults: ChatMessage[] = [];
+
+    for (const toolCall of round1.toolCalls) {
+      if (toolCall.function.name !== 'search_book') continue;
+
+      const args = JSON.parse(toolCall.function.arguments);
+      const result = await executeSearchBook(args.title, args.author);
+
+      toolResults.push({
+        role: 'tool',
+        tool_call_id: toolCall.id,
+        content: result,
+      });
+    }
+
+    // 第2轮：把搜索结果反馈给 DeepSeek，生成最终推荐
+    const round2 = await provider.chat(
+      [...messages, assistantMessage, ...toolResults],
       { responseFormat: 'json', temperature: 0.3 }
     );
-    
-    const parsed = parseJsonFromLlm(aiResponse);
-    const result = recommendationsSchema.parse(parsed);
-    
-    const enrichedPromises = result.map((book) => enrichBook(book));
-    const enrichedResults = await Promise.all(enrichedPromises);
 
-    // 验证作为增强信息（封面/简介）而非硬门槛
-    return createResponse<BookRecommendation[]>(enrichedResults, rateLimitResult);
+    const parsed = parseJsonFromLlm(round2.content);
+    const result = recommendationsSchema.parse(parsed);
+
+    return createResponse<BookRecommendation[]>(result, rateLimitResult);
   } catch (error) {
     console.error('Recommend API error:', error);
     

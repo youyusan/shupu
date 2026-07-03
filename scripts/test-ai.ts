@@ -19,9 +19,9 @@ async function testStructure(rawInput: string): Promise<StructuredIdea | null> {
       { responseFormat: 'json', temperature: 0.3 }
     );
     
-    console.log('AI响应:', response);
+    console.log('AI响应:', response.content);
     
-    const parsed = parseJsonFromLlm(response);
+    const parsed = parseJsonFromLlm(response.content);
     const result = structuredIdeaSchema.parse(parsed);
     
     console.log('校验通过:', JSON.stringify(result, null, 2));
@@ -45,9 +45,9 @@ async function testRecommend(structuredIdea: StructuredIdea): Promise<BookRecomm
       { responseFormat: 'json', temperature: 0.3 }
     );
     
-    console.log('AI响应:', response);
+    console.log('AI响应:', response.content);
     
-    const parsed = parseJsonFromLlm(response);
+    const parsed = parseJsonFromLlm(response.content);
     const result = recommendationsSchema.parse(parsed);
     
     console.log('校验通过:', JSON.stringify(result, null, 2));

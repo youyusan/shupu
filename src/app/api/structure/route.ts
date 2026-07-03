@@ -85,7 +85,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       { responseFormat: 'json', temperature: 0.3 }
     );
     
-    const parsed = parseJsonFromLlm(aiResponse);
+    const parsed = parseJsonFromLlm(aiResponse.content);
     const result = structuredIdeaSchema.parse(parsed);
     
     return createResponse<StructuredIdea>(result, rateLimitResult);
