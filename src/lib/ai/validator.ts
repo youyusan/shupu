@@ -20,7 +20,7 @@ export const bookRecommendationSchema = z.object({
   verified: z.boolean().default(false),
 });
 
-export const recommendationsSchema = z.array(bookRecommendationSchema).min(3).max(6);
+export const recommendationsSchema = z.array(bookRecommendationSchema).min(6).max(12); 
 
 export const structureRequestSchema = z.object({
   rawInput: z.string().min(1).max(500),
