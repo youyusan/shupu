@@ -17,10 +17,9 @@ export const bookRecommendationSchema = z.object({
   coverImage: z.string().optional(),
   description: z.string().optional(),
   publishedDate: z.string().optional(),
-  verified: z.boolean().default(false),
 });
 
-export const recommendationsSchema = z.array(bookRecommendationSchema).min(3).max(6);
+export const recommendationsSchema = z.array(bookRecommendationSchema).min(5).max(8);
 
 export const structureRequestSchema = z.object({
   rawInput: z.string().min(1).max(500),

@@ -14,15 +14,7 @@ export async function enrichBook(
       timeoutPromise,
     ]);
 
-    if (!verifyResult.exists) {
-      return { ...book, verified: false };
-    }
-
-    // 如果 Google Books 返回了详细信息，用于丰富书籍数据
-    const enriched: BookRecommendation = {
-      ...book,
-      verified: true,
-    };
+    const enriched: BookRecommendation = { ...book };
 
     if (verifyResult.volumeInfo) {
       enriched.coverImage =
@@ -34,7 +26,7 @@ export async function enrichBook(
 
     return enriched;
   } catch {
-    return { ...book, verified: false };
+    return { ...book };
   }
 }
 

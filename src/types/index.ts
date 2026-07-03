@@ -17,7 +17,6 @@ export interface BookRecommendation {
   coverImage?: string;
   description?: string;
   publishedDate?: string;
-  verified: boolean;
 }
 
 export interface StructureRequest {
