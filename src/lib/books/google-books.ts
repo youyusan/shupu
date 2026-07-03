@@ -1,3 +1,5 @@
+import { proxyFetch } from '@/lib/utils/proxy-fetch';
+
 export interface GoogleBookVolumeInfo {
   title: string;
   authors?: string[];
@@ -20,6 +22,7 @@ const BASE_URL = 'https://www.googleapis.com/books/v1/volumes';
 /**
  * 搜索 Google Books，返回多条结果。
  * 不加 langRestrict——很多中文书在 Google Books 未标记语言，限制会误杀。
+ * 支持可选 API Key（GOOGLE_BOOKS_API_KEY），无 Key 时用匿名配额。
  */
 export async function searchBooks(
   title: string,
@@ -39,9 +42,12 @@ export async function searchBooks(
       }
     }
 
-    const response = await fetch(
-      `${BASE_URL}?q=${query}&maxResults=${maxResults}`,
-      { signal: AbortSignal.timeout(8000) }
+    const apiKey = process.env.GOOGLE_BOOKS_API_KEY;
+    const keyParam = apiKey ? `&key=${apiKey}` : '';
+
+    const response = await proxyFetch(
+      `${BASE_URL}?q=${query}&maxResults=${maxResults}${keyParam}`,
+      { timeout: 8000 }
     );
 
     if (!response.ok) return [];

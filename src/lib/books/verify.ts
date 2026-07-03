@@ -1,4 +1,5 @@
 import type { GoogleBookVolumeInfo } from './google-books';
+import { proxyFetch } from '@/lib/utils/proxy-fetch';
 
 interface OpenLibraryDoc {
   title?: string;
@@ -63,25 +64,28 @@ async function verifyByOpenLibrary(
   author?: string
 ): Promise<boolean> {
   try {
-    const query = encodeURIComponent(title);
-    const response = await fetch(
-      `https://openlibrary.org/search.json?q=${query}&limit=10`,
-      { signal: AbortSignal.timeout(5000) }
-    );
+    // Open Library 的 q= 参数要求至少 3 字符，短标题用 title= 参数绕过限制
+    const encodedTitle = encodeURIComponent(title);
+    const url = title.length < 3
+      ? `https://openlibrary.org/search.json?title=${encodedTitle}&limit=10`
+      : `https://openlibrary.org/search.json?q=${encodedTitle}&limit=10`;
+    const response = await proxyFetch(url, { timeout: 5000 });
 
     if (!response.ok) return false;
 
     const data: OpenLibraryResponse = await response.json();
-    if (!data.docs || data.docs.length === 0) return false;
+    if (data.docs && data.docs.length > 0) {
+      return data.docs.some((doc) => {
+        const titleMatch = doc.title && fuzzyMatch(doc.title, title);
+        if (!titleMatch) return false;
+        if (author && doc.author_name && doc.author_name.length > 0) {
+          return doc.author_name.some((a) => fuzzyMatch(a, author));
+        }
+        return true;
+      });
+    }
 
-    return data.docs.some((doc) => {
-      const titleMatch = doc.title && fuzzyMatch(doc.title, title);
-      if (!titleMatch) return false;
-      if (author && doc.author_name && doc.author_name.length > 0) {
-        return doc.author_name.some((a) => fuzzyMatch(a, author));
-      }
-      return true;
-    });
+    return false;
   } catch {
     return false;
   }
