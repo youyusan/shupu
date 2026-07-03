@@ -235,8 +235,11 @@ export function MapPage() {
   }
 
   return (
-    <div className="min-h-screen bg-bg flex flex-col items-center px-4 sm:px-6 py-8">
-      <div className="w-full max-w-5xl">
+    <div className="map-page">
+      <div className="bg-nebula" />
+      <div className="bg-overlay" />
+      <div className="content-wrapper">
+        <div className="w-full max-w-5xl">
         <header className="flex items-center justify-between mb-8 anim" data-delay="1">
           <button 
             onClick={handleBack}
@@ -352,6 +355,7 @@ export function MapPage() {
             重新开始
           </button>
         </div>
+        </div>
       </div>
 
       {modalVisible && (
@@ -428,6 +432,44 @@ export function MapPage() {
       )}
 
       <style>{`
+        .map-page {
+          position: relative;
+          width: 100%;
+          min-height: 100vh;
+          background: var(--color-bg);
+          overflow-x: hidden;
+        }
+
+        .bg-nebula {
+          position: absolute;
+          inset: 0;
+          background: url('/assets/nebula-bg.jpg') center/cover no-repeat;
+          z-index: 0;
+          opacity: 0.6;
+        }
+
+        .bg-overlay {
+          position: absolute;
+          inset: 0;
+          background:
+            radial-gradient(ellipse 70% 60% at 50% 50%, rgba(10, 10, 12, 0.5) 0%, transparent 70%),
+            radial-gradient(ellipse 40% 30% at 30% 60%, rgba(212, 165, 116, 0.08) 0%, transparent 60%),
+            radial-gradient(ellipse 40% 30% at 70% 40%, rgba(212, 165, 116, 0.05) 0%, transparent 50%),
+            linear-gradient(180deg, rgba(10,10,12,0.4) 0%, transparent 20%, transparent 80%, rgba(10,10,12,0.6) 100%);
+          z-index: 1;
+        }
+
+        .content-wrapper {
+          position: relative;
+          z-index: 10;
+          width: 100%;
+          min-height: 100vh;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          padding: 2rem 1rem;
+        }
+
         .anim {
           opacity: 0;
           transform: translateY(20px);
@@ -818,6 +860,14 @@ export function MapPage() {
         }
 
         @media (max-width: 768px) {
+          .bg-nebula {
+            opacity: 0.4;
+          }
+
+          .content-wrapper {
+            padding: 1.5rem 1rem;
+          }
+
           .desktop-layout {
             display: none;
           }
