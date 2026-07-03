@@ -94,6 +94,11 @@ async function verifyByGoogleBooks(
 ): Promise<GoogleBookVolumeInfo | null> {
   try {
     const { searchBooks } = await import('./google-books');
+    // ISBN 搜索：ISBN 本身就是精确匹配，不需要再校验标题
+    if (isbn && !title) {
+      const results = await searchBooks('', '', isbn, 1);
+      return results[0] ?? null;
+    }
     const results = await searchBooks(title, author, isbn, 5);
     // 多结果匹配：只要有任一条标题模糊匹配即通过
     return results.find((r) => !r.title || fuzzyMatch(r.title, title)) ?? null;

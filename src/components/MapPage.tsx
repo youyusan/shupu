@@ -613,6 +613,7 @@ export function MapPage() {
         }
 
         .book-node {
+          position: relative;
           display: flex;
           flex-direction: column;
           align-items: center;
@@ -1032,6 +1033,7 @@ export function MapPage() {
           }
 
           .mobile-card {
+            position: relative;
             width: 100%;
             max-width: 360px;
             display: flex;
