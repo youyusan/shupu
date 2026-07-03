@@ -72,6 +72,31 @@ const CheckIcon = (props: { className?: string }) => (
   </svg>
 );
 
+const WarningIcon = (props: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={props.className} aria-hidden="true">
+    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+    <line x1="12" y1="9" x2="12" y2="13" />
+    <line x1="12" y1="17" x2="12.01" y2="17" />
+  </svg>
+);
+
+/** 未验证书籍的警告标识 + tooltip */
+const UnverifiedBadge = () => (
+  <span className="unverified-badge">
+    <span
+      className="unverified-badge__icon"
+      tabIndex={0}
+      role="img"
+      aria-label="未验证"
+    >
+      <WarningIcon className="w-4 h-4" />
+    </span>
+    <span className="unverified-badge__tooltip">
+      未验证 — 此书 AI 可能存在幻觉，请人工验证后再参考
+    </span>
+  </span>
+);
+
 export function MapPage() {
   const { state, dispatch } = useAppState();
   const router = useRouter();
@@ -159,13 +184,15 @@ export function MapPage() {
   ];
 
   const renderBookNode = (book: BookRecommendation, index: number, isCenter = false) => {
+    const isUnverified = book.verified === false;
     return (
       <button
         key={`${book.title}-${index}`}
-        className={`book-node ${isCenter ? 'book-node--center' : ''}`}
+        className={`book-node ${isCenter ? 'book-node--center' : ''} ${isUnverified ? 'book-node--unverified' : ''}`}
         onClick={() => setSelectedBook(book)}
-        aria-label={`查看 ${book.title} 的详情`}
+        aria-label={`查看 ${book.title} 的详情${isUnverified ? '（未验证）' : ''}`}
       >
+        {isUnverified && <UnverifiedBadge />}
         <span className="book-node__cover">
           {book.coverImage ? (
             <img src={book.coverImage} alt={book.title} className="book-node__img" />
@@ -184,13 +211,15 @@ export function MapPage() {
   };
 
   const renderMobileCard = (book: BookRecommendation, index: number, isCenter = false) => {
+    const isUnverified = book.verified === false;
     return (
       <button
         key={`${book.title}-${index}`}
-        className={`mobile-card ${isCenter ? 'mobile-card--center' : ''}`}
+        className={`mobile-card ${isCenter ? 'mobile-card--center' : ''} ${isUnverified ? 'mobile-card--unverified' : ''}`}
         onClick={() => setSelectedBook(book)}
-        aria-label={`查看 ${book.title} 的详情`}
+        aria-label={`查看 ${book.title} 的详情${isUnverified ? '（未验证）' : ''}`}
       >
+        {isUnverified && <UnverifiedBadge />}
         <span className="mobile-card__cover">
           {book.coverImage ? (
             <img src={book.coverImage} alt={book.title} className="mobile-card__img" />
@@ -390,7 +419,15 @@ export function MapPage() {
                   )}
                 </div>
                 <div className="modal-info">
-                  <h3 id="modal-title" className="modal-title font-display">{selectedBook.title}</h3>
+                  <h3 id="modal-title" className="modal-title font-display">
+                    {selectedBook.title}
+                    {selectedBook.verified === false && (
+                      <span className="modal-unverified-tag">
+                        <WarningIcon className="w-3.5 h-3.5" />
+                        未验证
+                      </span>
+                    )}
+                  </h3>
                   <p className="modal-author">{selectedBook.author}</p>
                   <div className="modal-tag">
                     {directionLabels[selectedBook.direction]?.label}
@@ -607,6 +644,15 @@ export function MapPage() {
           box-shadow: 0 0 40px rgba(212, 165, 116, 0.12);
         }
 
+        .book-node--unverified {
+          border-style: dashed;
+          border-color: rgba(245, 158, 11, 0.4);
+        }
+
+        .book-node--unverified:hover {
+          border-color: rgba(245, 158, 11, 0.7);
+        }
+
         .book-node__cover {
           width: 72px;
           height: 100px;
@@ -675,6 +721,92 @@ export function MapPage() {
 
         .book-node--center .book-node__author {
           max-width: 130px;
+        }
+
+        /* 未验证标识 */
+        .unverified-badge {
+          position: absolute;
+          top: 6px;
+          right: 6px;
+          z-index: 5;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .unverified-badge__icon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 20px;
+          height: 20px;
+          color: rgba(245, 158, 11, 0.7);
+          cursor: help;
+          border-radius: 4px;
+          transition: color 0.2s;
+        }
+
+        .unverified-badge__icon:hover,
+        .unverified-badge__icon:focus-visible {
+          outline: none;
+          color: rgba(245, 158, 11, 1);
+        }
+
+        .unverified-badge__tooltip {
+          position: absolute;
+          top: calc(100% + 8px);
+          right: 0;
+          width: 200px;
+          padding: 0.625rem 0.875rem;
+          background: rgba(24, 24, 28, 0.95);
+          backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
+          border: 1px solid rgba(245, 158, 11, 0.3);
+          border-radius: 8px;
+          color: var(--color-text-secondary);
+          font-size: 0.75rem;
+          line-height: 1.5;
+          text-align: left;
+          opacity: 0;
+          transform: translateY(-4px);
+          pointer-events: none;
+          transition: opacity 0.2s ease, transform 0.2s ease;
+          z-index: 100;
+        }
+
+        .unverified-badge__tooltip::before {
+          content: '';
+          position: absolute;
+          top: -5px;
+          right: 6px;
+          width: 8px;
+          height: 8px;
+          background: rgba(24, 24, 28, 0.95);
+          border-left: 1px solid rgba(245, 158, 11, 0.3);
+          border-top: 1px solid rgba(245, 158, 11, 0.3);
+          transform: rotate(45deg);
+        }
+
+        .unverified-badge__icon:hover + .unverified-badge__tooltip,
+        .unverified-badge__icon:focus-visible + .unverified-badge__tooltip {
+          opacity: 1;
+          transform: translateY(0);
+        }
+
+        /* modal 内未验证标签 */
+        .modal-unverified-tag {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.25rem;
+          margin-left: 0.5rem;
+          padding: 0.125rem 0.5rem;
+          font-size: 0.6875rem;
+          font-weight: 400;
+          color: rgba(245, 158, 11, 0.9);
+          background: rgba(245, 158, 11, 0.1);
+          border: 1px solid rgba(245, 158, 11, 0.3);
+          border-radius: var(--radius-full);
+          vertical-align: middle;
         }
 
         .empty-center {
@@ -928,6 +1060,15 @@ export function MapPage() {
           .mobile-card--center {
             border-color: var(--color-accent);
             box-shadow: 0 0 30px rgba(212, 165, 116, 0.08);
+          }
+
+          .mobile-card--unverified {
+            border-style: dashed;
+            border-color: rgba(245, 158, 11, 0.4);
+          }
+
+          .mobile-card--unverified:hover {
+            border-color: rgba(245, 158, 11, 0.7);
           }
 
           .mobile-card__cover {
