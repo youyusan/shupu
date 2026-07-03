@@ -3,6 +3,7 @@ import { getProvider } from '@/lib/ai/provider';
 import { parseJsonFromLlm } from '@/lib/ai/json-parser';
 import { recommendRequestSchema, recommendationsSchema } from '@/lib/ai/validator';
 import { recommendPrompt } from '@/lib/prompts';
+import { enrichBooks } from '@/lib/books/enrich';
 import { rateLimiter } from '@/lib/rate-limiter';
 import type { ApiResponse, BookRecommendation, ErrorCode } from '@/types';
 
@@ -85,7 +86,17 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const parsed = parseJsonFromLlm(aiResponse.content);
     const result = recommendationsSchema.parse(parsed);
 
-    return createResponse<BookRecommendation[]>(result, rateLimitResult);
+    // 接入多源验证：每本书并行验证，返回带 verified 字段的数组
+    const enriched = await enrichBooks(result);
+
+    // 软过滤策略：已验证的优先排列在前，未验证的保留不丢弃
+    enriched.sort((a, b) => {
+      const va = a.verified ? 1 : 0;
+      const vb = b.verified ? 1 : 0;
+      return vb - va;
+    });
+
+    return createResponse<BookRecommendation[]>(enriched, rateLimitResult);
   } catch (error) {
     console.error('Recommend API error:', error);
     

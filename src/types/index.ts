@@ -14,6 +14,7 @@ export interface BookRecommendation {
   reason: string;
   direction: Direction;
   isbn?: string;
+  verified?: boolean;
   coverImage?: string;
   description?: string;
   publishedDate?: string;

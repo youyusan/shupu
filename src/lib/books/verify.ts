@@ -15,18 +15,47 @@ interface OpenLibraryResponse {
 const normalize = (s: string) =>
   s.replace(/[\s\u3000\-—·.,!?;:，。！？；：、]/g, '').toLowerCase();
 
+/** 编辑距离（Levenshtein distance） */
+function levenshtein(a: string, b: string): number {
+  const m = a.length;
+  const n = b.length;
+  if (m === 0) return n;
+  if (n === 0) return m;
+
+  const dp: number[][] = Array.from({ length: m + 1 }, () =>
+    new Array(n + 1).fill(0)
+  );
+  for (let i = 0; i <= m; i++) dp[i][0] = i;
+  for (let j = 0; j <= n; j++) dp[0][j] = j;
+
+  for (let i = 1; i <= m; i++) {
+    for (let j = 1; j <= n; j++) {
+      if (a[i - 1] === b[j - 1]) {
+        dp[i][j] = dp[i - 1][j - 1];
+      } else {
+        dp[i][j] = Math.min(
+          dp[i - 1][j - 1] + 1,
+          dp[i][j - 1] + 1,
+          dp[i - 1][j] + 1
+        );
+      }
+    }
+  }
+  return dp[m][n];
+}
+
+/**
+ * 模糊匹配：子串包含 或 编辑距离相似度 >= 50%
+ * 比旧版位置逐字符匹配更合理——词序重排不会判 0 分
+ */
 function fuzzyMatch(a: string, b: string): boolean {
   const na = normalize(a);
   const nb = normalize(b);
-  // 只要其中一个包含另一个，就匹配
+  if (!na || !nb) return false;
   if (na.includes(nb) || nb.includes(na)) return true;
-  if (na.length > 0 && nb.length > 0) {
-    const minLength = Math.min(na.length, nb.length);
-    const matchLength = Array.from(na).filter((char, i) => char === nb[i]).length;
-    // 放宽匹配阈值：从 0.6 -> 0.4，允许更多差异
-    if (matchLength >= minLength * 0.4) return true;
-  }
-  return false;
+  const maxLen = Math.max(na.length, nb.length);
+  const distance = levenshtein(na, nb);
+  return 1 - distance / maxLen >= 0.5;
 }
 
 async function verifyByOpenLibrary(
@@ -34,7 +63,6 @@ async function verifyByOpenLibrary(
   author?: string
 ): Promise<boolean> {
   try {
-    // 优先用 q= 通用搜索（比 title= 覆盖更广）
     const query = encodeURIComponent(title);
     const response = await fetch(
       `https://openlibrary.org/search.json?q=${query}&limit=10`,
@@ -65,8 +93,10 @@ async function verifyByGoogleBooks(
   isbn?: string
 ): Promise<GoogleBookVolumeInfo | null> {
   try {
-    const { searchBook } = await import('./google-books');
-    return await searchBook(title, author, isbn);
+    const { searchBooks } = await import('./google-books');
+    const results = await searchBooks(title, author, isbn, 5);
+    // 多结果匹配：只要有任一条标题模糊匹配即通过
+    return results.find((r) => !r.title || fuzzyMatch(r.title, title)) ?? null;
   } catch {
     return null;
   }
@@ -90,12 +120,10 @@ export async function verifyBookExists(
     }
   }
 
-  // 1. Google Books API（标题+作者搜索）
+  // 1. Google Books API（标题+作者搜索，多结果匹配）
   const gbResult = await verifyByGoogleBooks(title, author);
   if (gbResult) {
-    if (gbResult.title && fuzzyMatch(gbResult.title, title)) {
-      return { exists: true, source: 'google-books', volumeInfo: gbResult };
-    }
+    return { exists: true, source: 'google-books', volumeInfo: gbResult };
   }
 
   // 2. Open Library API

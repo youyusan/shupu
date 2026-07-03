@@ -14,7 +14,10 @@ export async function enrichBook(
       timeoutPromise,
     ]);
 
-    const enriched: BookRecommendation = { ...book };
+    const enriched: BookRecommendation = {
+      ...book,
+      verified: verifyResult.exists,
+    };
 
     if (verifyResult.volumeInfo) {
       enriched.coverImage =
@@ -26,14 +29,17 @@ export async function enrichBook(
 
     return enriched;
   } catch {
-    return { ...book };
+    // 验证超时或出错：不丢弃，标记为未验证
+    return { ...book, verified: false };
   }
 }
 
+/**
+ * 并行验证并补全所有书籍。
+ * 返回新数组，每本书带 verified 字段。
+ */
 export async function enrichBooks(
   books: BookRecommendation[]
-): Promise<void> {
-  books.forEach((book) => {
-    enrichBook(book);
-  });
+): Promise<BookRecommendation[]> {
+  return Promise.all(books.map((book) => enrichBook(book)));
 }

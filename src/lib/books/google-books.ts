@@ -17,11 +17,16 @@ interface GoogleBooksResponse {
 
 const BASE_URL = 'https://www.googleapis.com/books/v1/volumes';
 
-export async function searchBook(
+/**
+ * 搜索 Google Books，返回多条结果。
+ * 不加 langRestrict——很多中文书在 Google Books 未标记语言，限制会误杀。
+ */
+export async function searchBooks(
   title: string,
   author?: string,
-  isbn?: string
-): Promise<GoogleBookVolumeInfo | null> {
+  isbn?: string,
+  maxResults = 5
+): Promise<GoogleBookVolumeInfo[]> {
   try {
     let query: string;
 
@@ -32,23 +37,29 @@ export async function searchBook(
       if (author) {
         query += `+inauthor:${encodeURIComponent(author)}`;
       }
-      query += '&langRestrict=zh';
     }
 
-    const response = await fetch(`${BASE_URL}?q=${query}&maxResults=1`);
+    const response = await fetch(
+      `${BASE_URL}?q=${query}&maxResults=${maxResults}`,
+      { signal: AbortSignal.timeout(8000) }
+    );
 
-    if (!response.ok) {
-      return null;
-    }
+    if (!response.ok) return [];
 
     const data: GoogleBooksResponse = await response.json();
 
-    if (!data.items || data.items.length === 0) {
-      return null;
-    }
-
-    return data.items[0].volumeInfo;
+    return data.items?.map((item) => item.volumeInfo) ?? [];
   } catch {
-    return null;
+    return [];
   }
+}
+
+/** 向后兼容：返回第一条结果 */
+export async function searchBook(
+  title: string,
+  author?: string,
+  isbn?: string
+): Promise<GoogleBookVolumeInfo | null> {
+  const results = await searchBooks(title, author, isbn, 1);
+  return results[0] ?? null;
 }

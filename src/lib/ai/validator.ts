@@ -1,28 +1,29 @@
 import { z } from 'zod';
 
 export const structuredIdeaSchema = z.object({
-  theme: z.string().min(1).max(30),
-  genre: z.string().min(1).max(30),
-  readerProfile: z.string().min(1).max(30),
-  coreViewpoint: z.string().min(1).max(100),
+  theme: z.string().min(1).max(20),
+  genre: z.string().min(1).max(20),
+  readerProfile: z.string().min(1).max(20),
+  coreViewpoint: z.string().min(1).max(30),
 });
 
 export const bookRecommendationSchema = z.object({
   title: z.string().min(1).max(200),
   author: z.string().min(1).max(100),
-  coreSummary: z.string().min(10).max(500),
-  reason: z.string().min(10).max(200),
+  coreSummary: z.string().min(20).max(100),
+  reason: z.string().min(20).max(80),
   direction: z.enum(['anchor', 'genre-variant', 'theme-neighbor', 'reader-up', 'reader-down']),
   isbn: z.string().regex(/^[\d-]{10,17}$/).optional(),
+  verified: z.boolean().optional(),
   coverImage: z.string().optional(),
   description: z.string().optional(),
   publishedDate: z.string().optional(),
 });
 
-export const recommendationsSchema = z.array(bookRecommendationSchema).min(5).max(8);
+export const recommendationsSchema = z.array(bookRecommendationSchema).min(3).max(8);
 
 export const structureRequestSchema = z.object({
-  rawInput: z.string().min(1).max(3000),
+  rawInput: z.string().min(1).max(500),
   previousIdea: structuredIdeaSchema.optional(),
   feedback: z.string().optional(),
 });

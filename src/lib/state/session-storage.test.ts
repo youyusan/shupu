@@ -52,7 +52,7 @@ describe('sessionStorage utilities', () => {
         author: 'Author',
         coreSummary: 'Summary',
         reason: 'Reason',
-        direction: 'anchor',
+        direction: 'anchor' as const,
         verified: false,
       },
     ];
