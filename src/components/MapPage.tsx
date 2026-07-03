@@ -6,12 +6,12 @@ import { useAppState } from '@/lib/state/app-context';
 import type { Direction, BookRecommendation } from '@/types';
 import { StepIndicator } from './StepIndicator';
 
-const directionLabels: Record<Direction, { label: string; color: string }> = {
-  'anchor': { label: '你的想法最接近这里', color: '#4ECDC4' },
-  'genre-variant': { label: '不同的题材', color: '#F59E0B' },
-  'theme-neighbor': { label: '相近的主题', color: '#8B5CF6' },
-  'reader-up': { label: '更专业的方向', color: '#06B6D4' },
-  'reader-down': { label: '更通俗的方向', color: '#10B981' },
+const directionLabels: Record<Direction, { label: string }> = {
+  'anchor': { label: '你的想法最接近这里' },
+  'genre-variant': { label: '不同的题材' },
+  'theme-neighbor': { label: '相近的主题' },
+  'reader-up': { label: '更专业的方向' },
+  'reader-down': { label: '更通俗的方向' },
 };
 
 const BookIcon = (props: { className?: string }) => (
@@ -87,6 +87,22 @@ export function MapPage() {
   }, [state.recommendations, router]);
 
   useEffect(() => {
+    const animElements = document.querySelectorAll('.anim');
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (prefersReducedMotion) {
+      animElements.forEach(el => el.classList.add('active'));
+      return;
+    }
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        animElements.forEach(el => el.classList.add('active'));
+      });
+    });
+  }, []);
+
+  useEffect(() => {
     if (selectedBook) {
       setModalVisible(true);
       document.body.style.overflow = 'hidden';
@@ -135,11 +151,11 @@ export function MapPage() {
   const themeBooks = getBooksByDirection('theme-neighbor');
   const genreBooks = getBooksByDirection('genre-variant');
 
-  const gridLayout: { books: BookRecommendation[]; direction: Direction; position: string; icon: React.FC<{ className?: string }> }[] = [
-    { books: upBooks, direction: 'reader-up', position: 'top', icon: ArrowUpIcon },
-    { books: themeBooks, direction: 'theme-neighbor', position: 'right', icon: ArrowRightIcon },
-    { books: genreBooks, direction: 'genre-variant', position: 'left', icon: ArrowLeftIcon },
-    { books: downBooks, direction: 'reader-down', position: 'bottom', icon: ArrowDownIcon },
+  const gridLayout = [
+    { books: upBooks, direction: 'reader-up' as Direction, position: 'top', icon: ArrowUpIcon },
+    { books: themeBooks, direction: 'theme-neighbor' as Direction, position: 'right', icon: ArrowRightIcon },
+    { books: genreBooks, direction: 'genre-variant' as Direction, position: 'left', icon: ArrowLeftIcon },
+    { books: downBooks, direction: 'reader-down' as Direction, position: 'bottom', icon: ArrowDownIcon },
   ];
 
   const renderBookNode = (book: BookRecommendation, index: number, isCenter = false) => {
@@ -201,7 +217,7 @@ export function MapPage() {
       <div className={`direction-column direction-column--${position}`}>
         <div className="direction-label">
           <IconComponent className="w-3 h-3" />
-          <span style={{ color: label.color }}>{label.label}</span>
+          <span>{label.label}</span>
         </div>
         <div className="direction-books">
           {books.map((book, index) => (
@@ -219,41 +235,57 @@ export function MapPage() {
   }
 
   return (
-    <div className="map-page">
-      <div className="bg-nebula" />
-      <div className="bg-overlay" />
-
-      <nav className="nav">
-        <div className="nav__left">
-          <button onClick={handleBack} className="nav__back" aria-label="返回上一页">
-            <ArrowLeftIcon className="w-4 h-4" />
-            <span>返回</span>
+    <div className="min-h-screen bg-bg flex flex-col items-center px-4 sm:px-6 py-8">
+      <div className="w-full max-w-5xl">
+        <header className="flex items-center justify-between mb-8 anim" data-delay="1">
+          <button 
+            onClick={handleBack}
+            className="font-display text-xl font-bold text-text tracking-[0.02em]"
+          >
+            书<span className="text-accent">谱</span>
           </button>
-        </div>
-        <div className="nav__center">
+          <button 
+            onClick={handleRestart}
+            className="flex items-center gap-1.5 text-sm text-text-muted hover:text-text-secondary transition-colors px-2 py-1.5 rounded-sm"
+          >
+            <RotateCcwIcon className="w-3.5 h-3.5" />
+            重新开始
+          </button>
+        </header>
+
+        <div className="flex justify-center mb-6 anim" data-delay="1.5">
           <StepIndicator currentStep="map" />
         </div>
-        <div className="nav__right">
-          <button onClick={handleCopy} className="nav__action" aria-label={copied ? '已复制清单' : '复制书籍清单'}>
+
+        <div className="text-center mb-10">
+          <h1 className="font-display text-[clamp(1.75rem,5vw,2.5rem)] font-bold text-text leading-[1.3] tracking-[-0.02em] mb-4 anim" data-delay="2">
+            你的参考地图
+          </h1>
+          <p className="text-[clamp(1rem,2.5vw,1.125rem)] text-text-secondary leading-[1.75] max-w-2xl mx-auto anim" data-delay="3">
+            围绕你的想法，看看可以往哪些方向探索。点击书籍查看详情。
+          </p>
+        </div>
+
+        <div className="flex justify-center mb-8 anim" data-delay="3.5">
+          <button
+            onClick={handleCopy}
+            className="inline-flex items-center gap-2 px-6 py-2.5 bg-surface border border-border-subtle text-text-secondary text-sm rounded-full hover:bg-surface-hover hover:border-border hover:text-text transition-all duration-200"
+          >
             {copied ? (
               <>
                 <CheckIcon className="w-4 h-4" />
-                <span>已复制</span>
+                已复制
               </>
             ) : (
               <>
                 <CopyIcon className="w-4 h-4" />
-                <span>复制清单</span>
+                复制书籍清单
               </>
             )}
           </button>
         </div>
-      </nav>
 
-      <div className="content-container">
-        <div className="desktop-layout">
-          
-
+        <div className="desktop-layout anim" data-delay="4">
           <div className="map-grid">
             <div className="grid-top">
               {renderDirectionColumn(upBooks, 'reader-up', 'top', ArrowUpIcon)}
@@ -293,7 +325,7 @@ export function MapPage() {
             
             return (
               <div key={direction} className="mobile-section">
-                <div className="mobile-label" style={{ '--direction-color': label.color } as React.CSSProperties}>
+                <div className="mobile-label">
                   <IconComponent className="w-3 h-3" />
                   <span>{label.label}</span>
                 </div>
@@ -310,9 +342,17 @@ export function MapPage() {
 
           <div className="mobile-spacer" />
         </div>
-      </div>
 
-      <div className="map-hint">点击书籍查看详情</div>
+        <div className="flex justify-center mt-12 mb-8 anim" data-delay="5">
+          <button
+            onClick={handleRestart}
+            className="inline-flex items-center gap-2 px-8 py-3.5 bg-transparent text-accent border border-border rounded-full font-medium hover:bg-accent-dim hover:border-accent active:scale-[0.98] transition-all duration-200"
+          >
+            <RotateCcwIcon className="w-4 h-4" />
+            重新开始
+          </button>
+        </div>
+      </div>
 
       {modalVisible && (
         <div 
@@ -346,12 +386,9 @@ export function MapPage() {
                   )}
                 </div>
                 <div className="modal-info">
-                  <h3 id="modal-title" className="modal-title">{selectedBook.title}</h3>
+                  <h3 id="modal-title" className="modal-title font-display">{selectedBook.title}</h3>
                   <p className="modal-author">{selectedBook.author}</p>
-                  <div 
-                    className="modal-tag" 
-                    style={{ '--tag-color': directionLabels[selectedBook.direction]?.color } as React.CSSProperties}
-                  >
+                  <div className="modal-tag">
                     {directionLabels[selectedBook.direction]?.label}
                   </div>
                   <p className="modal-summary">{selectedBook.coreSummary}</p>
@@ -390,105 +427,28 @@ export function MapPage() {
         </div>
       )}
 
-      <div className="footer">
-        <button onClick={handleRestart} className="footer__btn" aria-label="重新开始，清空所有数据">
-          <RotateCcwIcon className="w-4 h-4" />
-          <span>重新开始</span>
-        </button>
-      </div>
-
       <style>{`
-        .map-page {
-          position: relative;
-          width: 100%;
-          min-height: 100vh;
-          background: #080C10;
-          overflow-x: hidden;
+        .anim {
+          opacity: 0;
+          transform: translateY(20px);
+          will-change: opacity, transform;
         }
-
-        .bg-nebula {
-          position: absolute;
-          inset: 0;
-          background: url('/assets/nebula-bg.jpg') center/cover no-repeat;
-          z-index: 0;
+        .anim.active {
+          opacity: 1;
+          transform: translateY(0);
+          transition: opacity 0.7s var(--ease-out-expo), transform 0.7s var(--ease-out-expo);
         }
-
-        .bg-overlay {
-          position: absolute;
-          inset: 0;
-          background:
-            radial-gradient(ellipse 70% 60% at 50% 50%, rgba(10, 26, 26, 0.4) 0%, transparent 70%),
-            radial-gradient(ellipse 40% 30% at 30% 60%, rgba(78, 205, 196, 0.03) 0%, transparent 60%),
-            linear-gradient(180deg, rgba(8,12,16,0.3) 0%, transparent 20%, transparent 80%, rgba(8,12,16,0.5) 100%);
-          z-index: 1;
-        }
-
-        .nav {
-          position: relative;
-          z-index: 100;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          padding: 0.875rem 1.5rem;
-          background: rgba(8, 12, 16, 0.7);
-          backdrop-filter: blur(16px);
-          border-bottom: 1px solid rgba(80, 120, 130, 0.1);
-        }
-
-        .nav__left, .nav__right {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-        }
-
-        .nav__center {
-          display: none;
-        }
-
-        .nav__back, .nav__action {
-          display: flex;
-          align-items: center;
-          gap: 0.375rem;
-          padding: 0.5rem 0.875rem;
-          font-size: 0.875rem;
-          color: #4ECDC4;
-          background: transparent;
-          border: 1px solid rgba(78, 205, 196, 0.2);
-          border-radius: 8px;
-          cursor: pointer;
-          transition: background-color 0.2s, border-color 0.2s, color 0.2s;
-        }
-
-        .nav__back:hover, .nav__action:hover {
-          background: rgba(78, 205, 196, 0.1);
-          border-color: rgba(78, 205, 196, 0.4);
-        }
-
-        .nav__back:focus-visible, .nav__action:focus-visible {
-          outline: none;
-          box-shadow: 0 0 0 2px rgba(78, 205, 196, 0.5);
-        }
-
-        .content-container {
-          position: relative;
-          z-index: 10;
-          width: 100%;
-          min-height: calc(100vh - 64px - 72px);
-          max-height: calc(100vh - 64px - 72px);
-          overflow-y: auto;
-          overflow-x: hidden;
-        }
+        .anim[data-delay="1"].active { transition-delay: 0s; }
+        .anim[data-delay="1.5"].active { transition-delay: 0.05s; }
+        .anim[data-delay="2"].active { transition-delay: 0.1s; }
+        .anim[data-delay="3"].active { transition-delay: 0.2s; }
+        .anim[data-delay="3.5"].active { transition-delay: 0.3s; }
+        .anim[data-delay="4"].active { transition-delay: 0.4s; }
+        .anim[data-delay="5"].active { transition-delay: 0.5s; }
 
         .desktop-layout {
-          position: relative;
+          display: block;
           width: 100%;
-          min-height: 100%;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: flex-start;
-          padding: 1.5rem;
-          padding-bottom: 4rem;
         }
 
         .mobile-layout {
@@ -497,13 +457,13 @@ export function MapPage() {
 
         .map-grid {
           position: relative;
-          z-index: 10;
           display: grid;
           grid-template-columns: 1fr auto 1fr;
           grid-template-rows: auto auto auto;
           gap: 1.5rem;
           width: 100%;
           max-width: 900px;
+          margin: 0 auto;
         }
 
         .grid-top {
@@ -559,6 +519,7 @@ export function MapPage() {
           font-weight: 500;
           letter-spacing: 0.08em;
           text-transform: uppercase;
+          color: var(--color-text-muted);
         }
 
         .direction-books {
@@ -569,33 +530,7 @@ export function MapPage() {
         }
 
         .book-wrapper {
-          animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-          opacity: 0;
-        }
-
-        .book-wrapper--center {
-          animation-delay: 0.2s;
-        }
-
-        .direction-column--top .book-wrapper { animation-delay: 0.4s; }
-        .direction-column--top .book-wrapper:nth-child(2) { animation-delay: 0.5s; }
-        .direction-column--top .book-wrapper:nth-child(3) { animation-delay: 0.6s; }
-
-        .direction-column--right .book-wrapper { animation-delay: 0.6s; }
-        .direction-column--right .book-wrapper:nth-child(2) { animation-delay: 0.7s; }
-        .direction-column--right .book-wrapper:nth-child(3) { animation-delay: 0.8s; }
-
-        .direction-column--left .book-wrapper { animation-delay: 0.8s; }
-        .direction-column--left .book-wrapper:nth-child(2) { animation-delay: 0.9s; }
-        .direction-column--left .book-wrapper:nth-child(3) { animation-delay: 1s; }
-
-        .direction-column--bottom .book-wrapper { animation-delay: 1s; }
-        .direction-column--bottom .book-wrapper:nth-child(2) { animation-delay: 1.1s; }
-        .direction-column--bottom .book-wrapper:nth-child(3) { animation-delay: 1.2s; }
-
-        @keyframes fadeInUp {
-          from { opacity: 0; transform: translateY(10px); }
-          to { opacity: 1; transform: translateY(0); }
+          opacity: 1;
         }
 
         .book-node {
@@ -604,10 +539,9 @@ export function MapPage() {
           align-items: center;
           gap: 0.5rem;
           padding: 0.75rem;
-          background: rgba(16, 22, 30, 0.8);
-          backdrop-filter: blur(12px);
-          border: 1px solid rgba(80, 120, 130, 0.2);
-          border-radius: 12px;
+          background: var(--color-surface);
+          border: 1px solid var(--color-border-subtle);
+          border-radius: var(--radius-lg);
           cursor: pointer;
           transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s, border-color 0.3s, box-shadow 0.3s;
           min-width: 120px;
@@ -615,20 +549,20 @@ export function MapPage() {
 
         .book-node:hover {
           transform: translateY(-4px) scale(1.02);
-          background: rgba(22, 30, 40, 0.9);
-          border-color: rgba(78, 205, 196, 0.3);
-          box-shadow: 0 12px 32px rgba(78, 205, 196, 0.1);
+          background: var(--color-surface-hover);
+          border-color: var(--color-border);
+          box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
         }
 
         .book-node:focus-visible {
           outline: none;
-          box-shadow: 0 0 0 2px rgba(78, 205, 196, 0.6);
+          box-shadow: 0 0 0 2px var(--color-accent);
         }
 
         .book-node--center {
           min-width: 140px;
-          border-color: rgba(78, 205, 196, 0.3);
-          box-shadow: 0 0 40px rgba(78, 205, 196, 0.12);
+          border-color: var(--color-accent);
+          box-shadow: 0 0 40px rgba(212, 165, 116, 0.12);
         }
 
         .book-node__cover {
@@ -636,7 +570,7 @@ export function MapPage() {
           height: 100px;
           border-radius: 6px;
           overflow: hidden;
-          background: rgba(78, 205, 196, 0.1);
+          background: var(--color-accent-dim);
           display: flex;
           align-items: center;
           justify-content: center;
@@ -660,7 +594,8 @@ export function MapPage() {
           display: flex;
           align-items: center;
           justify-content: center;
-          color: rgba(78, 205, 196, 0.4);
+          color: var(--color-accent);
+          opacity: 0.5;
         }
 
         .book-node__info {
@@ -672,7 +607,7 @@ export function MapPage() {
         .book-node__title {
           font-size: 0.75rem;
           font-weight: 500;
-          color: #F0EDE8;
+          color: var(--color-text);
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
@@ -687,7 +622,7 @@ export function MapPage() {
 
         .book-node__author {
           font-size: 0.75rem;
-          color: #506468;
+          color: var(--color-text-muted);
           margin-top: 0.25rem;
           display: block;
           white-space: nowrap;
@@ -706,64 +641,8 @@ export function MapPage() {
           align-items: center;
           gap: 0.75rem;
           padding: 2rem;
-          color: #506468;
+          color: var(--color-text-muted);
           font-size: 0.875rem;
-        }
-
-        .map-hint {
-          position: absolute;
-          bottom: 80px;
-          left: 50%;
-          transform: translateX(-50%);
-          z-index: 20;
-          font-size: 0.8125rem;
-          color: #506468;
-          opacity: 0;
-          animation: hintFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) 1.5s forwards;
-        }
-
-        @keyframes hintFadeIn {
-          from { opacity: 0; transform: translateX(-50%) translateY(6px); }
-          to { opacity: 0.5; transform: translateX(-50%) translateY(0); }
-        }
-
-        .footer {
-          position: fixed;
-          bottom: 0;
-          left: 0;
-          right: 0;
-          z-index: 100;
-          display: flex;
-          justify-content: center;
-          padding: 0.875rem 1.5rem;
-          background: rgba(8, 12, 16, 0.85);
-          backdrop-filter: blur(16px);
-          border-top: 1px solid rgba(80, 120, 130, 0.1);
-        }
-
-        .footer__btn {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          padding: 0.75rem 1.5rem;
-          font-size: 0.875rem;
-          color: #EF4444;
-          background: rgba(239, 68, 68, 0.08);
-          border: 1px solid rgba(239, 68, 68, 0.2);
-          border-radius: 8px;
-          cursor: pointer;
-          transition: background-color 0.2s, border-color 0.2s, color 0.2s;
-        }
-
-        .footer__btn:hover {
-          background: rgba(239, 68, 68, 0.15);
-          border-color: rgba(239, 68, 68, 0.4);
-          color: #FCA5A5;
-        }
-
-        .footer__btn:focus-visible {
-          outline: none;
-          box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.4);
         }
 
         .modal-overlay {
@@ -771,7 +650,6 @@ export function MapPage() {
           inset: 0;
           z-index: 1000;
           background: rgba(0, 0, 0, 0);
-          backdrop-filter: blur(0);
           display: flex;
           align-items: center;
           justify-content: center;
@@ -785,7 +663,6 @@ export function MapPage() {
         .modal-overlay--visible {
           opacity: 1;
           background: rgba(0, 0, 0, 0.7);
-          backdrop-filter: blur(4px);
           pointer-events: auto;
         }
 
@@ -794,10 +671,9 @@ export function MapPage() {
           max-width: 480px;
           width: 100%;
           max-height: 80vh;
-          background: rgba(16, 22, 30, 0.95);
-          backdrop-filter: blur(20px);
-          border: 1px solid rgba(80, 120, 130, 0.2);
-          border-radius: 16px;
+          background: var(--color-surface);
+          border: 1px solid var(--color-border);
+          border-radius: var(--radius-lg);
           padding: 1.5rem;
           overflow-y: auto;
           transform: scale(0.92) translateY(20px);
@@ -819,7 +695,7 @@ export function MapPage() {
           display: flex;
           align-items: center;
           justify-content: center;
-          color: #506468;
+          color: var(--color-text-muted);
           background: transparent;
           border: none;
           border-radius: 8px;
@@ -829,13 +705,13 @@ export function MapPage() {
         }
 
         .modal-close:hover {
-          color: #F0EDE8;
-          background: rgba(80, 120, 130, 0.1);
+          color: var(--color-text);
+          background: var(--color-bg-elevated);
         }
 
         .modal-close:focus-visible {
           outline: none;
-          box-shadow: 0 0 0 2px rgba(78, 205, 196, 0.5);
+          box-shadow: 0 0 0 2px var(--color-accent);
         }
 
         .modal-cover {
@@ -843,7 +719,7 @@ export function MapPage() {
           height: 280px;
           border-radius: 12px;
           overflow: hidden;
-          background: rgba(78, 205, 196, 0.1);
+          background: var(--color-accent-dim);
           margin-bottom: 1.25rem;
           display: flex;
           align-items: center;
@@ -862,11 +738,12 @@ export function MapPage() {
           display: flex;
           align-items: center;
           justify-content: center;
-          color: rgba(78, 205, 196, 0.3);
+          color: var(--color-accent);
+          opacity: 0.4;
         }
 
         .modal-info {
-          color: #F0EDE8;
+          color: var(--color-text);
         }
 
         .modal-title {
@@ -877,7 +754,7 @@ export function MapPage() {
 
         .modal-author {
           font-size: 0.9375rem;
-          color: #506468;
+          color: var(--color-text-muted);
           margin-bottom: 0.75rem;
         }
 
@@ -885,27 +762,27 @@ export function MapPage() {
           display: inline-block;
           padding: 0.25rem 0.75rem;
           font-size: 0.75rem;
-          color: var(--tag-color, #4ECDC4);
-          background: rgba(78, 205, 196, 0.1);
-          border-radius: 4px;
+          color: var(--color-accent);
+          background: var(--color-accent-dim);
+          border-radius: var(--radius-full);
           margin-bottom: 1rem;
-          border: 1px solid rgba(78, 205, 196, 0.15);
+          border: 1px solid var(--color-accent);
         }
 
         .modal-summary {
           font-size: 0.9375rem;
           line-height: 1.7;
-          color: #A8A29E;
+          color: var(--color-text-secondary);
           margin-bottom: 1rem;
         }
 
         .modal-desc {
           font-size: 0.875rem;
           line-height: 1.6;
-          color: #6B6560;
+          color: var(--color-text-muted);
           margin-top: 1rem;
           padding-top: 1rem;
-          border-top: 1px solid rgba(80, 120, 130, 0.1);
+          border-top: 1px solid var(--color-border-subtle);
         }
 
         .modal-links {
@@ -913,7 +790,7 @@ export function MapPage() {
           gap: 1rem;
           margin-top: 1.25rem;
           padding-top: 1rem;
-          border-top: 1px solid rgba(80, 120, 130, 0.1);
+          border-top: 1px solid var(--color-border-subtle);
         }
 
         .modal-link {
@@ -922,23 +799,22 @@ export function MapPage() {
           gap: 0.5rem;
           padding: 0.5rem 1rem;
           font-size: 0.875rem;
-          color: #4ECDC4;
-          background: rgba(78, 205, 196, 0.08);
-          border: 1px solid rgba(78, 205, 196, 0.2);
-          border-radius: 8px;
+          color: var(--color-accent);
+          background: var(--color-accent-dim);
+          border: 1px solid var(--color-accent);
+          border-radius: var(--radius-full);
           text-decoration: none;
-          transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+          transition: background-color 0.2s, color 0.2s;
         }
 
         .modal-link:hover {
-          background: rgba(78, 205, 196, 0.15);
-          border-color: rgba(78, 205, 196, 0.4);
-          color: #6EE7B7;
+          background: var(--color-accent);
+          color: var(--color-bg);
         }
 
         .modal-link:focus-visible {
           outline: none;
-          box-shadow: 0 0 0 2px rgba(78, 205, 196, 0.5);
+          box-shadow: 0 0 0 2px var(--color-accent);
         }
 
         @media (max-width: 768px) {
@@ -949,7 +825,6 @@ export function MapPage() {
           .mobile-layout {
             display: block;
             width: 100%;
-            padding: 1.5rem 1rem 80px;
           }
 
           .mobile-section {
@@ -964,7 +839,7 @@ export function MapPage() {
             font-weight: 500;
             letter-spacing: 0.08em;
             text-transform: uppercase;
-            color: var(--direction-color, #506468);
+            color: var(--color-text-muted);
             margin-bottom: 0.75rem;
           }
 
@@ -981,10 +856,9 @@ export function MapPage() {
             align-items: center;
             gap: 0.875rem;
             padding: 1rem;
-            background: rgba(16, 22, 30, 0.7);
-            backdrop-filter: blur(16px) saturate(1.3);
-            border: 1px solid rgba(80, 120, 130, 0.15);
-            border-radius: 12px;
+            background: var(--color-surface);
+            border: 1px solid var(--color-border-subtle);
+            border-radius: var(--radius-lg);
             cursor: pointer;
             transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s, background 0.3s;
             margin: 0 auto;
@@ -992,18 +866,18 @@ export function MapPage() {
 
           .mobile-card:hover {
             transform: translateY(-2px);
-            background: rgba(22, 30, 40, 0.8);
-            border-color: rgba(80, 120, 130, 0.3);
+            background: var(--color-surface-hover);
+            border-color: var(--color-border);
           }
 
           .mobile-card:focus-visible {
             outline: none;
-            box-shadow: 0 0 0 2px rgba(78, 205, 196, 0.5);
+            box-shadow: 0 0 0 2px var(--color-accent);
           }
 
           .mobile-card--center {
-            border-color: rgba(78, 205, 196, 0.2);
-            box-shadow: 0 0 30px rgba(78, 205, 196, 0.08);
+            border-color: var(--color-accent);
+            box-shadow: 0 0 30px rgba(212, 165, 116, 0.08);
           }
 
           .mobile-card__cover {
@@ -1011,7 +885,7 @@ export function MapPage() {
             height: 76px;
             border-radius: 6px;
             overflow: hidden;
-            background: rgba(78, 205, 196, 0.1);
+            background: var(--color-accent-dim);
             flex-shrink: 0;
             display: flex;
             align-items: center;
@@ -1030,7 +904,8 @@ export function MapPage() {
             display: flex;
             align-items: center;
             justify-content: center;
-            color: rgba(78, 205, 196, 0.4);
+            color: var(--color-accent);
+            opacity: 0.5;
           }
 
           .mobile-card__info {
@@ -1041,7 +916,7 @@ export function MapPage() {
           .mobile-card__title {
             font-size: 0.875rem;
             font-weight: 500;
-            color: #F0EDE8;
+            color: var(--color-text);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -1050,14 +925,14 @@ export function MapPage() {
 
           .mobile-card__author {
             font-size: 0.75rem;
-            color: #506468;
+            color: var(--color-text-muted);
             margin-top: 0.25rem;
             display: block;
           }
 
           .mobile-card__summary {
             font-size: 0.75rem;
-            color: #6B6560;
+            color: var(--color-text-secondary);
             margin-top: 0.5rem;
             display: -webkit-box;
             -webkit-line-clamp: 2;
@@ -1068,31 +943,19 @@ export function MapPage() {
 
           .mobile-divider {
             height: 1px;
-            background: linear-gradient(to right, transparent, rgba(78, 205, 196, 0.2), transparent);
+            background: linear-gradient(to right, transparent, var(--color-border-subtle), transparent);
             margin-top: 1.5rem;
           }
 
           .mobile-spacer {
             height: 2rem;
           }
-
-          .nav {
-            padding: 0.75rem 1rem;
-          }
-
-          .map-hint {
-            display: none;
-          }
-
-          .footer__btn {
-            padding: 0.75rem 1.25rem;
-          }
         }
 
         @media (max-width: 480px) {
           .modal-content {
             padding: 1rem;
-            border-radius: 12px;
+            border-radius: var(--radius-md);
           }
 
           .modal-cover {
@@ -1110,8 +973,7 @@ export function MapPage() {
             animation-iteration-count: 1 !important;
             transition-duration: 0.01ms !important;
           }
-          .book-wrapper { opacity: 1; animation: none; }
-          .map-hint { opacity: 0.5; animation: none; }
+          .anim { opacity: 1; transform: none; }
           .modal-content { transform: none; opacity: 1; }
           .modal-overlay { opacity: 1; }
         }
