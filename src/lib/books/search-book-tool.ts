@@ -1,6 +1,5 @@
 import type { ToolDefinition } from '@/lib/ai/provider';
 import { searchBook } from './google-books';
-import type { GoogleBookVolumeInfo } from './google-books';
 
 /**
  * DeepSeek function calling 工具定义：搜索一本书是否存在
