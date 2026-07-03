@@ -76,7 +76,7 @@ async function verifyByGoogleBooks(
 export async function verifyBookExists(
   title: string,
   author?: string,
-  isbn?: string
+  _isbn?: string
 ): Promise<{ exists: boolean; source: 'google-books' | 'open-library' | 'none'; volumeInfo?: GoogleBookVolumeInfo }> {
   // 1. Google Books API
   const gbResult = await verifyByGoogleBooks(title, author);
