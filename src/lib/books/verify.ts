@@ -18,11 +18,13 @@ const normalize = (s: string) =>
 function fuzzyMatch(a: string, b: string): boolean {
   const na = normalize(a);
   const nb = normalize(b);
+  // 只要其中一个包含另一个，就匹配
   if (na.includes(nb) || nb.includes(na)) return true;
   if (na.length > 0 && nb.length > 0) {
     const minLength = Math.min(na.length, nb.length);
     const matchLength = Array.from(na).filter((char, i) => char === nb[i]).length;
-    if (matchLength >= minLength * 0.6) return true;
+    // 放宽匹配阈值：从 0.6 -> 0.4，允许更多差异
+    if (matchLength >= minLength * 0.4) return true;
   }
   return false;
 }
@@ -32,9 +34,10 @@ async function verifyByOpenLibrary(
   author?: string
 ): Promise<boolean> {
   try {
+    // 优先用 q= 通用搜索（比 title= 覆盖更广）
     const query = encodeURIComponent(title);
     const response = await fetch(
-      `https://openlibrary.org/search.json?title=${query}&limit=5`,
+      `https://openlibrary.org/search.json?q=${query}&limit=10`,
       { signal: AbortSignal.timeout(5000) }
     );
 
@@ -71,7 +74,7 @@ async function verifyByGoogleBooks(
 
 /**
  * 通过网络搜索多源验证一本书是否真实存在。
- * 依次尝试：Google Books API -> Open Library API。
+ * 依次尝试：ISBN 精确搜索 -> Google Books API -> Open Library API。
  * 任一来源确认匹配即返回验证通过。
  */
 export async function verifyBookExists(
@@ -79,16 +82,23 @@ export async function verifyBookExists(
   author?: string,
   isbn?: string
 ): Promise<{ exists: boolean; source: 'google-books' | 'open-library' | 'none'; volumeInfo?: GoogleBookVolumeInfo }> {
-  // 1. Google Books API（优先使用 ISBN 精确搜索）
-  const gbResult = await verifyByGoogleBooks(title, author, isbn);
+  // 0. 如果 AI 提供了 ISBN，优先用 ISBN 精确搜索（最可靠）
+  if (isbn) {
+    const isbnResult = await verifyByGoogleBooks('', '', isbn);
+    if (isbnResult) {
+      return { exists: true, source: 'google-books', volumeInfo: isbnResult };
+    }
+  }
+
+  // 1. Google Books API（标题+作者搜索）
+  const gbResult = await verifyByGoogleBooks(title, author);
   if (gbResult) {
-    // 做简单的标题匹配确认
     if (gbResult.title && fuzzyMatch(gbResult.title, title)) {
       return { exists: true, source: 'google-books', volumeInfo: gbResult };
     }
   }
 
-  // 2. Open Library API（对中文书覆盖更好）
+  // 2. Open Library API
   const olExists = await verifyByOpenLibrary(title, author);
   if (olExists) {
     return { exists: true, source: 'open-library' };
