@@ -399,7 +399,7 @@ export default function HomePage() {
 
         <footer className="footer px-4 py-8 border-t border-border-subtle text-center">
           <p className="text-sm text-text-muted">
-            <span className="font-display font-semibold text-text-secondary">书谱</span> — 为每一个想写书的人
+            <span className="font-display font-semibold text-text-secondary">书谱</span> — 让你写书心中有谱
           </p>
           <p className="text-xs text-text-muted mt-3">
             你的想法仅用于本次分析，不会被保存或用于训练
