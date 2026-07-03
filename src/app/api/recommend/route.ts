@@ -89,8 +89,19 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     
     const enrichedPromises = result.map((book) => enrichBook(book));
     const enrichedResults = await Promise.all(enrichedPromises);
-    
-    return createResponse<BookRecommendation[]>(enrichedResults, rateLimitResult);
+
+    // 过滤未通过网络搜索验证的书籍，杜绝幻觉
+    const verifiedBooks = enrichedResults.filter((book) => book.verified);
+
+    if (verifiedBooks.length === 0) {
+      return createErrorResponse(
+        'AI_SERVICE_ERROR',
+        '未能找到可验证的对标书籍，请调整想法后重试',
+        rateLimitResult
+      );
+    }
+
+    return createResponse<BookRecommendation[]>(verifiedBooks, rateLimitResult);
   } catch (error) {
     console.error('Recommend API error:', error);
     
